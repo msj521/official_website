@@ -1,0 +1,73 @@
+package com.example.mapper.Admin;
+
+import com.example.model.Menu;
+import com.example.model.User;
+import org.apache.ibatis.annotations.*;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+@Transactional
+@Mapper
+public interface AdminMapper {
+
+    /*判断用户是否存在*/
+    @Select("select fid from `user_info` where tel=#{tel}")
+    User user_info(String tel);
+
+    /*验证用户密码*/
+    @Select("select * from user_info where tel=#{tel} and password=#{password}")
+    User login(String tel,String password);
+
+    /*导航栏列表*/
+    @Select("select * from base_menu_info where route like CONCAT('%',#{string},'%') or menu_name like CONCAT('%',#{string},'%') order by fid desc")
+    List<Menu> menu_list(@Param("string") String string);
+
+    /*编辑一条导航栏*/
+    @Select("select * from base_menu_info where fid= #{fid}")
+    Menu menu_info(@Param("fid") Integer fid);
+
+    /*导航栏更新*/
+    @Update("update base_menu_info set menu_name=#{menu_name},route=#{route},record_status=#{record_status} where fid=#{fid}")
+    Integer menu_update(@Param("fid") Integer fid,
+                       @Param("menu_name") String menu_name,
+                       @Param("route") String route,
+                       @Param("record_status") String record_status);
+    //删除
+    /*type==-1标记删除*/
+    @Update("update base_menu_info set record_status=#{record_status} where fid in #{fid} ")
+    Integer menu_update_status(@Param("fid") String fid, @Param("record_status") String record_status);
+
+    /*2彻底删除*/
+    @Delete("delete from base_menu_info where fid=#{fid}")
+    Integer menu_del(@Param("fid") String fid);
+
+    //增
+    @Insert("INSERT INTO base_menu_info(menu_name,route,record_status)VALUES(#{menu_name},#{route},${record_status})")
+    Integer menu_add(Menu menu);
+
+
+    //批量删
+/*    @DeleteProvider(type = Menu.class,method = "delete")
+    boolean delete(@Param("menuList")List<Menu> menuList);*/
+
+/*    //批量增
+    @InsertProvider(type = Menu.class,method = "insert")
+    int insert(@Param("demoList")List<Menu> demoList);
+
+    //批量删
+    @DeleteProvider(type = Menu.class,method = "delete")
+    boolean delete(@Param("demoList")List<Menu> demoList);
+
+    //批量查
+    @Select("SELECT * FROM demo")
+    List<Menu> find();
+    @SelectProvider(type = Menu.class,method = "find2")
+    List<Menu>find2(@Param("demoList")List<Menu> demoList);
+
+
+    //批量改
+    @UpdateProvider(type = Menu.class,method = "update")
+    boolean update(@Param("demoList")List<Menu> demoList);*/
+
+}

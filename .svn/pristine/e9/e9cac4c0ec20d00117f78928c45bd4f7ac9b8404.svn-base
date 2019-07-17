@@ -1,0 +1,341 @@
+package com.example.demo.web;
+
+import com.example.config.UUIDUtils;
+import com.example.demo.admin.CommonController;
+import com.example.mapper.Api.ApiMapper;
+import com.example.model.FeedBack;
+import com.example.model.News;
+import com.example.model.Source;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+@Controller
+public class WebController extends CommonController{
+
+    @Autowired
+    public ApiMapper apiMapper;
+
+    @Value("${Environment.Path}")
+    private String Environment;
+
+    /**
+     * 公用头部
+     * @param location 轮播图位置
+     * @param map 模型
+     * @return
+     */
+    public Map<String, Object> Banner(Integer location, Map<String, Object> map) {
+        map.put("menu_list",RedisCache("menu_list",apiMapper.GetMenuList(),1));
+        map.put("banner_list",RedisCache("banner_list_"+location,apiMapper.GetBannerList(location),1));
+        return map;
+    }
+    //轮播图
+    @RequestMapping("/banner")
+    public Map<String, Object> BannerList(){
+        Map<String ,Object> map= new HashMap<>();
+        map.put("code","200");
+        map.put("msg","请求成功");
+        map.put("banner_list",apiMapper.GetBannerList(1));
+        System.out.println(map);
+        return map;
+    }
+
+    //导航栏
+    @RequestMapping("/menu")
+    public Map<String, Object> menuList(){
+        Map<String ,Object> map= new HashMap<>();
+        map.put("code","200");
+        map.put("msg","请求成功");
+        map.put("menu_list",apiMapper.GetMenuList());
+        System.out.println(map);
+        return map;
+    }
+    //首页
+    @RequestMapping("/")
+    @ResponseBody
+    public Map<String, Object> Index(){
+        Map<String ,Object> map= new HashMap<>();
+        map.put("code","200");
+        map.put("msg","请求成功");
+        Banner(1,map);
+        map.put("class_list",RedisCache("class_list_1", apiMapper.GetClassList(1),1));
+        map.put("news_list",RedisCache("news_list", apiMapper.GetNewsListIndex(),1));
+        return map;
+        //return "web/index";
+    }
+
+    /**
+     *  产品中心:center 成功案例:case
+     * @param type 类型
+     * @return
+     */
+    @RequestMapping("/product/{type}")
+    @ResponseBody
+    public Map<String, Object> ClassList(@PathVariable("type") String type){
+        //分类类型
+        int class_type;
+        if(type.equals("center")){
+            class_type=2;
+        }else if(type.equals("case")){
+            class_type=3;
+        }else {
+            class_type=2;
+        }
+        Map<String ,Object> map= new HashMap<>();
+        Banner(class_type,map);
+        map.put("product_type",RedisCache("class_list_"+class_type,apiMapper.GetClassList(class_type),1));
+        return map;
+    }
+
+    /**
+     * 产品中心-成功案例 详情
+     * @param en   分类
+     * @param type 类型
+     * @return
+     */
+    @RequestMapping("/product/{type}/{en}")
+    @ResponseBody
+    public Map<String, Object> ProductList(@PathVariable(value = "en") String en,@PathVariable("type") String type){
+        int class_id;
+        int class_type;
+        if(type.equals("center")){
+            if(en.equals("agent")){
+                class_id=5;
+            }else if(en.equals("meeting")){
+                class_id=6;
+            }else {
+                class_id=4;
+            }
+            class_type=1;
+        }else{
+            if(en.equals("agent")){
+                class_id=8;
+            }else if(en.equals("meeting")){
+                class_id=9;
+            }else {
+                class_id=7;
+            }
+            class_type=2;
+        }
+        Map<String ,Object> map= new HashMap<>();
+        map.put("product_list",RedisCache("product_list_"+en,apiMapper.GetProductInfo(class_type,class_id),1));
+        return map;
+    }
+
+    /**
+     * 新闻中心
+     * @param fid  新闻主键id
+     * @param page 页数
+     * @param size 几条
+     * @return
+     */
+    @RequestMapping("/news")
+    @ResponseBody
+    public Map<String, Object> NewsList(@RequestParam(value = "fid",defaultValue = "0",required = false) Integer fid,
+            @RequestParam(value = "page",defaultValue = "0",required = false) Integer page,
+            @RequestParam(value = "size",defaultValue = "10",required = false) Integer size){
+
+        Map<String ,Object> map= new HashMap<>();
+        String key;
+        Banner(4,map);
+        map.put("news_class",RedisCache("class_list_4",apiMapper.GetClassList(4),1));
+        if(fid>0){
+            key="news_info_"+fid;
+            map.put("news_info",RedisCache(key,apiMapper.GetNewsInfo(fid),1));
+        }else{
+            //RedisCache(key,apiMapper.GetNewsList(class_id));
+            //1. 在参数里接受当前是第几页 根据page ，以及每页显示多少条数据 size。 默认值分别是0和10。
+            //2. 根据page,size进行分页，并且设置id 倒排序
+            PageHelper.startPage(page,size,"fid desc");
+            //3. 因为PageHelper的作用，这里就会返回当前分页的集合了
+            List<News> cs =  RedisCache("news_list",apiMapper.GetNewsList(),1);
+            //4. 根据返回的集合，创建PageInfo对象
+            PageInfo<News> news_list = new PageInfo<>(cs);
+            map.put("news_list",news_list.getList());
+            map.put("total",news_list.getTotal());
+        }
+        return map;
+    }
+
+    /**
+     * 关于康尔泰
+     * @return
+     */
+    @RequestMapping("/about")
+    @ResponseBody
+    public Map<String, Object> AboutInfo(){
+        Map<String ,Object> map= new HashMap<>();
+        Banner(5,map);
+        map.put("about",apiMapper.GetAboutInfo());
+        return map;
+    }
+
+    /**
+     * 联系我们
+     * @return
+     */
+    @RequestMapping("/contact")
+    @ResponseBody
+    public Map<String, Object> ContactInfo(){
+        Map<String ,Object> map= new HashMap<>();
+        Banner(6,map);
+        map.put("contact", apiMapper.GetAboutInfo().getContact_us());
+        return map;
+    }
+
+    /**
+     * 意见反馈
+     * @param feedback 意见数据对象
+     * @return 返回状态
+     */
+    @ResponseBody
+    @RequestMapping(value = "/feedback")
+    public Map<String, Object> SubmitContact(FeedBack feedback) {
+        Map<String, Object> map = new HashMap<>();
+        if(feedback.getContent()==null ||feedback.getTel()==null || feedback.getUser_name()==null){
+            map.put("code", "401");
+            map.put("msg", "必填项必填！");
+        }else {
+            feedback.setCreate_time(new Date());
+            feedback.setRecord_status(1);
+            Integer status= apiMapper.InsertFeedBack(feedback);
+            if(status>0){
+                map.put("code", "200");
+                map.put("msg", "感谢您的反馈，我们会及时与你联系");
+            }else {
+                map.put("code", "402");
+                map.put("msg", "提交失败");
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 图片上传
+     * *
+     * @param file  资源流
+     * @param images_id  图片fid
+     * @param source  资源对象
+     * */
+    @ResponseBody
+    @PostMapping(value = "/api/upload")
+    public Map<String, Object> upload_img(MultipartFile file, @RequestParam(value = "images_id") Integer images_id, Source source, HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+
+        String path=Environment; //上传路径
+
+        String fileName=file.getOriginalFilename();//获取文件名
+
+        Long filesize=file.getSize();
+
+        String Suffix=fileName.substring(fileName.lastIndexOf("."));//获取后缀名
+
+        String newfiele= UUIDUtils.getRandomNum(18)+Suffix;//新文件名
+
+        String newPath= path + newfiele;//文件新地址
+
+        File uploadFile = new File(newPath);
+
+        // 检测是否存在目录
+        if (!uploadFile.getParentFile().exists()) {
+            uploadFile.getParentFile().mkdirs();
+        }
+
+        if (fileName != null && uploadFile!= null){
+            try {
+                String imagepath;
+                imagepath="/web/images/"+newfiele;
+                file.transferTo(uploadFile);//上传图片最终
+                Integer status;
+                Integer fid;
+                source.setFile_name(fileName);
+                source.setFile_path(imagepath);
+                source.setFile_size(filesize);
+                source.setRecord_status(1);
+
+                if(images_id>0){
+                    source.setFid(images_id);
+                    System.out.print(source);
+                    status=apiMapper.image_update(source);
+                    fid=images_id;
+                }else {
+                    source.setCreate_time(new Date());
+                    status=apiMapper.image_add(source);
+                    fid=source.getFid();
+                }
+
+                if(status==1){
+                    map.put("code", "200");
+                    map.put("data", fid);
+                    map.put("msg", "上传成功");
+                }else {
+                    map.put("code", "401");
+                    map.put("msg", "上传失败");
+                }
+            } catch (Exception e) {
+                // 业务方进行异常处理
+                map.put("code", "402");
+                map.put("msg", e);
+            }
+        }else{
+            map.put("code", "402");
+            map.put("msg", "文件不存在");
+        }
+        return map;
+    }
+
+    /**
+     * 文本编辑器图片上传
+     * @param file
+     * @return
+     */
+    @RequestMapping(value = "/api/imgUpdate")
+    @ResponseBody
+    public String imgUpdate(MultipartFile file) {
+        if (file.isEmpty()) {
+            return "error";
+        }
+        // 获取文件名
+        String fileName = file.getOriginalFilename();
+        // 获取文件的后缀名
+        String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        // 这里我使用随机字符串来重新命名图片
+        fileName = Calendar.getInstance().getTimeInMillis() + UUIDUtils.getRandomNum(6)+ suffixName;
+        // 这里的路径为Nginx的代理路径，这里是/data/images/xxx.png
+
+        /*本地*/
+        String path=Environment;
+
+        String newPath= path + fileName;//文件新地址
+
+        File dest = new File(newPath);
+        // 检测是否存在目录
+        if (!dest.getParentFile().exists()) {
+            dest.getParentFile().mkdirs();
+        }
+        try {
+            file.transferTo(dest);
+            //url的值为图片的实际访问地址 这里我用了Nginx代理，访问的路径是http://localhost/xxx.png
+            String config = "{\"state\": \"SUCCESS\"," +
+                    "\"url\": \"" + "/web/images/"+fileName + "\"," +
+                    "\"title\": \"" + fileName + "\"," +
+                    "\"original\": \"" + fileName + "\"}";
+            return config;
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+}

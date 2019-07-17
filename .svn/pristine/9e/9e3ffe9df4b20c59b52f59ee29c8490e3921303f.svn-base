@@ -1,0 +1,18 @@
+<div class="nav">
+  <div class="navlist">
+    <div class="logo">
+      <a href="/"><img src="/web/images/logo.png"></a>
+    </div>
+    <div class="navct">
+      <ul class="nav_ul">
+        <#list menu_list as v>
+          <li><a href="${v.route}"
+          <#if (menu==v.route) >
+            class="active"
+          </#if>
+            >${v.menu_name}</a></li>
+        </#list>
+      </ul>
+    </div>
+  </div>
+</div>

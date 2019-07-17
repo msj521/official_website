@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+	<#--header-->
+	<#include "header.ftl">
+	<#--menu-->
+	<#include "menu.ftl">
+	<#--banner-->
+	<#include "banner.ftl">
+
+	<#--轮播新闻-->
+	<div class="hot_news">
+		<div class="ct_main">
+			<div class="hot_news_txt">
+				<div class="hot_news_txtlf">
+					新闻动态：
+				</div>
+				<div class="hot_news_txtct">
+					<div class="content">
+						<ul>
+							<#list news_list as v>
+								<li><a href="/news/?fid=${v.fid}">${v.title}</a></li>
+							</#list>
+						</ul>
+					</div>
+				</div>
+				<div class="hot_news_txtrg">
+					<a href="/news">更多..</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<#--分类-->
+    <div class="ctlist">
+        <div class="ct_main">
+            <ul class="ct_main_ul">
+				<#list class_list as v>
+					<li style="background: url(${v.file_path}) no-repeat;">
+						<a href="${v.jump_url}">
+							<div class="mun_txt">${v.class_name_zh}</div>
+						</a>
+					</li>
+				</#list>
+            </ul>
+        </div>
+    </div>
+
+	<#--footer-->
+	<#include "footer.ftl">
+
+	</body>
+</html>
+<script type="text/javascript">
+$(".fullSlide").hover(function(){
+    $(this).find(".prev,.next").stop(true, true).fadeTo("show", 0.8)
+},
+function(){
+    $(this).find(".prev,.next").fadeOut()
+});
+$(".fullSlide").slide({
+    titCell: ".hd ul",
+    mainCell: ".bd ul",
+    effect: "fold",
+    autoPlay: true,
+    autoPage: true,
+    trigger: "click",
+    startFun: function(i) {
+        var curLi = jQuery(".fullSlide .bd li").eq(i);
+        if ( !! curLi.attr("_src")) {
+            curLi.css("background-image", curLi.attr("_src")).removeAttr("_src")
+        }
+    }
+});
+//向上翻滚
+function scroll(){
+    $(".content ul").animate({"margin-top":"-50px"},function(){
+        $(".content ul li:eq(0)").appendTo($(".content ul"))
+        $(".content ul").css({"margin-top":0})
+    })
+}
+setInterval(scroll,3000)
+</script>

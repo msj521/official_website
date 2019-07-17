@@ -1,0 +1,102 @@
+package com.example.model;
+
+import com.example.config.DateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.stereotype.Repository;
+import java.io.Serializable;
+import java.util.Date;
+
+@Repository
+public class Source implements Serializable {
+    private Integer fid;
+    private String  file_name;
+    private String  file_path;
+    private Integer source_type;
+    private Long    file_size;
+    private Integer record_status;
+    private Integer creator_id;
+    private Date create_time;
+
+    public Integer getFid() {
+        return fid;
+    }
+
+    public void setFid(Integer fid) {
+        this.fid = fid;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+    public String getFile_path() {
+        return file_path;
+    }
+
+    public void setFile_path(String file_path) {
+        this.file_path = file_path;
+    }
+
+    public Integer getSource_type() {
+        return source_type;
+    }
+
+    public void setSource_type(Integer source_type) {
+        this.source_type = source_type;
+    }
+
+    public Long getFile_size() {
+        return file_size;
+    }
+
+    public void setFile_size(Long file_size) {
+        this.file_size = file_size;
+    }
+
+    public Integer getRecord_status() {
+        return record_status;
+    }
+
+    public void setRecord_status(Integer record_status) {
+        this.record_status = record_status;
+    }
+
+    public Integer getCreator_id() {
+        return creator_id;
+    }
+
+    public void setCreator_id(Integer creator_id) {
+        this.creator_id = creator_id;
+    }
+
+    @JsonSerialize(using = DateSerializer.class)
+    public Date getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(Date create_time) {
+        this.create_time = create_time;
+    }
+
+    public Source(){
+
+    }
+
+    @Override
+    public String toString() {
+        return "Source{" +
+                "fid=" + fid +
+                ", file_name='" + file_name + '\'' +
+                ", file_path='" + file_path + '\'' +
+                ", source_type=" + source_type +
+                ", file_size=" + file_size +
+                ", record_status=" + record_status +
+                ", creator_id=" + creator_id +
+                ", create_time=" + create_time +
+                '}';
+    }
+}

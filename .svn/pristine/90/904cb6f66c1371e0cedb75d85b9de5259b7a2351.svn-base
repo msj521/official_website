@@ -1,0 +1,167 @@
+<#include "../public/header.ftl"/>
+<body>
+<div class="x-body layui-anim layui-anim-up">
+  <form action="/products/update"  class="layui-form" method="post" enctype="multipart/form-data" >
+
+    <div class="layui-form-item">
+      <label for="class_type"  class="layui-form-label">类型</label>
+      <div class="layui-input-block">
+        <select name="class_type"   id="class_type"  lay-search="" lay-verify="class_type"   lay-filter="class_type">
+          <#if (list??)>
+            <option value=1 <#if (list.class_type ==1) >selected="selected"</#if> >产品中心</option>
+            <option value=2 <#if (list.class_type ==2) >selected="selected"</#if>>成功案例</option>
+          <#else>
+            <option value=1 >产品中心</option>
+            <option value=2 >成功案例</option>
+          </#if>
+        </select>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label for="class_id" class="layui-form-label" id="class_name">分类</label>
+      <div class="layui-input-block" id="class">
+        <select  lay-search="" lay-verify="select" id="nt" name="class_id" ></select>
+      </div>
+    </div>
+
+
+    <div class="layui-form-item">
+      <label title class="layui-form-label">名称</label>
+      <div class="layui-input-block">
+        <input  type="text" id="title" name="title" required layui_search=""  autocomplete="off" value="${(list.title)!""}" class="layui-input">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">简介</label>
+      <div class="layui-input-block">
+        <textarea placeholder="请输入简介"  id="digest" name="digest" autocomplete="off"
+                          class="layui-textarea" style="height: 80px;">${(list.digest)!""}</textarea>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label for="title" class="layui-form-label">更多</label>
+      <div class="layui-input-block">
+        <input  type="text" id="jump_url" name="jump_url" required layui_search="" autocomplete="off" value="${(list.jump_url)!""}" class="layui-input">
+      </div>
+    </div>
+
+    <#include "../public/upload.ftl"/>
+
+    <div class="layui-form-item layui-form-text">
+      <label for="content" class="layui-form-label">产品内容</label>
+      <div class="layui-input-block" >
+        <script id="editor" type="text/plain" name="content"></script>
+      </div>
+    </div>
+
+
+    <div class="layui-form-item">
+      <label for="sort" class="layui-form-label">排序</label>
+      <div class="layui-input-block">
+        <input type="text" class="layui-input" name="sort" value="${(list.sort)!1}">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">是否启用</label>
+      <div class="layui-input-block">
+        <select name="record_status" id="record_status">
+          <#if (list??)>
+            <option value="1" <#if (list.record_status ==1) >selected="selected"</#if>>启用</option>
+            <option value="2" <#if (list.record_status ==2) >selected="selected"</#if>>禁用</option>
+          <#else>
+            <option value="1">启用</option>
+            <option value="2">禁用</option>
+          </#if>
+        </select>
+      </div>
+    </div>
+
+    <input type="hidden" name="fid" value="${(list.fid)!0}">
+
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <button class="layui-btn"  type="submit">保存</button>
+    </div>
+  </form>
+</div>
+<script>
+  //重新渲染表单
+  function renderForm(){
+    layui.use('form', function(){
+      var form = layui.form;
+      form.render('select');
+    });
+  }
+
+  $(document).ready(function(){
+
+    /*加载分类*/
+    var class_type =${(list.class_type)!0};
+    publics(class_type);
+
+    /*文本编辑*/
+    var ue = UE.getEditor('editor');
+    var field = '${(list.content)!""}';
+    ue.addListener("ready", function () {
+      // editor准备好之后才可以使用
+      if (field != "") {
+        console.log(field);
+        ue.setContent(HTMLDecode(field));
+      }
+    });
+
+    UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+    UE.Editor.prototype.getActionUrl = function(action) {
+      if (action === 'uploadimage' || action === 'uploadscrawl' || action === 'uploadimage') {
+        //在这里返回我们实际的上传图片地址
+        return '/api/imgUpdate';
+      } else {
+        return this._bkGetActionUrl.call(this, action);
+      }
+    };
+
+  });
+
+  /*下拉框动态加载*/
+  layui.use(['jquery','form','layer','table'], function(){
+    var $ = layui.jquery;
+    var form = layui.form;
+    form.on('select(class_type)', function(data){
+      publics(data.value);
+    });
+  });
+
+  function publics(type){
+    var class_id=${(list.class_id)!0};
+    type=parseInt(type);
+    var types=type===0 || type===1?2:3;
+    $.ajax({
+      url:'/products/gettype',
+      data:{class_type:types},
+      type:'post',
+      success:function(data){
+        //往下拉菜单里添加元素
+        var option = '';
+        $.each(data,function(index,item){
+          //循环获取返回值，并组装成html代码
+          var select="";
+          var html=types===2?"产品-":"案例-";
+          //console.log(item.fid,class_id,item.fid===class_id);
+          if(item.fid===class_id){
+            select=' selected="selected" ';
+          }
+          option +="<option value='"+item.fid+"' "+select+">"+html+item.class_name_zh+"</option>";
+      });
+      $('#nt').html("");
+      $('#nt').append(option);
+      renderForm();
+      }
+    });
+  }
+</script>
+</body>
+</html>

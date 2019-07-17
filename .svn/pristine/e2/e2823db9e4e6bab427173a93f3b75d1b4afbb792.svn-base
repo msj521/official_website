@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css"/>
+		<script type="text/javascript" src="js/jquery.js" ></script>
+	</head>
+	<body>
+		<div class="nav">
+			<div class="navlist">
+				<div class="logo">
+					<a href="index.html"><img src="images/logo.png"></a>
+				</div>
+				<div class="navct">
+					<ul class="nav_ul">
+						<li><a href="关于康尔泰.html">关于康尔泰</a></li>
+						<li><a href="产品中心.html">产品中心</a></li>
+						<li><a href="应用案例.html" class="active">应用案例</a></li>
+						<li><a href="新闻中心.html">新闻中心</a></li>
+						<li><a href="联系我们.html">联系我们</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="ctlist" style="background: url(images/pic_introducedpage.png) no-repeat;">
+			<div class="ct_main">
+				<h1 class="zs_h1">软件应用案例展示</h1>
+				<div class="zhans_list">
+					<div class="zhans_lf">
+						<ul>
+							<li><a href="#" class="active">医习之地</a></li>
+							<li><a href="#">ESSD</a></li>
+							<li><a href="#">CSSD</a></li>
+							<li><a href="#">督查系统</a></li>
+							<li><a href="#">考试系统</a></li>
+						</ul>
+					</div>
+					<div class="zhans_rg">
+						<h1>医习之地</h1>
+						<p>腾讯云为游戏行业提供一系列解决方案，涵盖开发、运维、运营等领域和场景。针对不同类型的游戏提供灵活而稳定的部署方案，助您轻松应对玩家激增、 高并发、海量访问等带来的问题；为游戏的各种应用场景提供游戏生态服务解决方案，如游戏场景的开发组件、游戏安全、游戏加速、全球互联互通等， 让您的游戏更稳定、更安全、更好玩。</p>
+						<a href="#" class="lijie_btn">了解更多</a>
+						<hr style="color: #979797;"/>
+						<div class="logoslist">
+							<ul>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="footer">
+			<div class="ct_main">
+				<div class="footer_link">
+					<a href="#">关于我们</a>|
+					<a href="#">使用条款</a>|
+					<a href="#">举报投诉</a>|
+					<a href="#">联系我们</a>
+				</div>
+				<p class="ft_p">上海康尔泰软件科技有限公司 版权所有</p>
+				<p class="ft_p">互联网文化证书 沪ICP备 1233445</p>
+			</div>
+		</div>
+	</body>
+</html>

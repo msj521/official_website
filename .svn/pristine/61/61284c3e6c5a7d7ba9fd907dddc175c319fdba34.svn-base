@@ -1,0 +1,60 @@
+package com.example.demo.admin;
+
+import com.example.service.impl.RedisServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Controller;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
+@Controller
+public class CommonController {
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedisServiceImpl redisService;
+
+    public List Comment(String key, List map){
+        try {
+            boolean exists = redisTemplate.hasKey(key);
+            if(exists){
+                //新增数据时先删除缓存
+                redisTemplate.delete(key);
+                //新增数据时存入缓存
+                redisService.valuePut(key,map);
+                List first_page = (List) redisService.getValue(key);
+                System.out.println("读取缓存数据"+key+":"+first_page);
+                return first_page;
+            }else {
+                System.out.println("读取数 据库数据"+key+":"+map);
+                return  map;
+            }
+        }catch (Exception e){
+            System.out.println("异常"+e+":"+map);
+            return  map;
+        }
+    }
+
+
+    void return_status(Integer status,String route, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html; charset=UTF-8"); //转码
+        PrintWriter out = response.getWriter();
+        out.flush();
+        if(status==1){
+            out.println("<script>");
+            out.println("var index = parent.layer.getFrameIndex(window.name);" +
+                    "parent.layer.close(index);parent.location.href='"+route+"';");
+            out.println("</script>");
+        }else {
+            out.println("<script>");
+            out.println("alert('保存失败');");
+            out.println("history.back();");
+            out.println("</script>");
+        }
+    }
+}

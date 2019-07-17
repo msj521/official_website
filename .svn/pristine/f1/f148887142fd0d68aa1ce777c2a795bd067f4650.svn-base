@@ -1,0 +1,21 @@
+<div class="footer">
+	<div class="ct_main">
+		<div class="footer_link">
+			<a href="#">关于我们</a>|
+			<a href="#">使用条款</a>|
+			<a href="#">举报投诉</a>|
+			<a href="#">联系我们</a>
+		</div>
+		<p class="ft_p">上海康尔泰软件科技有限公司 版权所有</p>
+		<p class="ft_p">互联网文化证书 沪ICP备 1233445</p>
+		<!--
+                        <div class="pst_img">
+                            <div class="Bitmap">
+                                <img src="images/Bitmap.png" />
+                            </div>
+                            <div class="pic_code">
+                                <img src="images/pic_code.png" />
+                            </div>
+                        </div>-->
+	</div>
+</div>

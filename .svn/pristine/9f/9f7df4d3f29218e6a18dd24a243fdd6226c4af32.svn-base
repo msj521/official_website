@@ -1,0 +1,23 @@
+package com.example.demo;
+
+import com.example.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+//声明Rest 风格的控制器
+// RestController 一般用于写接口 只返回json数据
+@RestController
+public class BootController {
+
+    @Autowired
+    public UserService userService;
+    @RequestMapping("boot/{name}")
+    @ResponseBody  //用于json 返回数据 适用于接口使用
+    public  String Hello(@PathVariable("name") String name){
+        System.out.println(userService.getUser(1));
+        return "Spring Boot:"+name;
+    }
+}

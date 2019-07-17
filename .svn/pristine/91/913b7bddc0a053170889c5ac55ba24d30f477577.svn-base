@@ -1,0 +1,74 @@
+<#include "../public/header.ftl"/>
+<body>
+<div class="x-body">
+  <form action="/banner/update" method="post" enctype="multipart/form-data" >
+      <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-inline">
+          <input  type="text" id="title" name="title" required layui_search=""  autocomplete="off" value="${(list.title)!""}" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">轮播位置</label>
+        <div class="layui-input-inline">
+          <select name="location" id="location">
+            <#if (location_list??)>
+              <#list location_list as v>
+                <option value="${v.fid}"
+                        <#if (list??) >
+                          <#if (v.fid==list.location) >selected</#if>
+                        </#if>
+                >${v.class_name_zh}</option>
+              </#list>
+            <#else>
+
+            </#if>
+          </select>
+        </div>
+      </div>
+
+      <#--<div class="layui-form-item">-->
+        <#--<label class="layui-form-label">选择图片:</label>-->
+        <#--<div class="layui-input-inline">-->
+          <#--<input type="file" name="file" accept="image/*" />-->
+        <#--</div>-->
+        <#--<div class="layui-upload-list">-->
+          <#--<img class="layui-upload-img" id="img1" width="150" src="${(list.file_path)!""}">-->
+        <#--</div>-->
+      <#--</div>-->
+      <#include "../public/upload.ftl"/>
+
+      <div class="layui-form-item">
+        <label for="sort" class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+          <input type="text" class="layui-input" name="sort" value="${(list.sort)!1}">
+        </div>
+      </div>
+
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-inline">
+          <select name="record_status" id="record_status">
+            <#if (list??)>
+            <option value="1" <#if (list.record_status =="1") >selected="selected"</#if>>启用</option>
+            <option value="2" <#if (list.record_status =="2") >selected="selected"</#if>>禁用</option>
+            <#else>
+              <option value="1">启用</option>
+              <option value="2">禁用</option>
+            </#if>
+          </select>
+        </div>
+      </div>
+
+      <input type="hidden" name="fid" value="${(list.fid)!""}">
+
+      <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <button class="layui-btn"  type="submit">保存</button>
+      </div>
+  </form>
+</div>
+</body>
+</html>

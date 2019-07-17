@@ -1,0 +1,34 @@
+package com.example.mapper.Api;
+
+import com.example.model.*;
+import java.util.List;
+
+/*接口列表*/
+public interface ApiMapper {
+
+    //轮播图
+    List<Banner> GetBannerList(Integer location);
+
+    //关于康尔泰
+    AboutUs GetAboutInfo();
+
+    //导航栏
+    List<Menu> GetMenuList();
+
+    //首页  产品中心  成功案例分类
+    List<ClassType> GetClassList(Integer type);
+
+    //新闻中心
+    List<News> GetNewsList(Integer class_id);
+
+    //新闻详情
+    List<News> GetNewsInfo(Integer fid);
+
+    //产品中心
+    List<Product> GetProductInfo(Integer class_type,Integer class_id);
+
+    //数据提交联系我们
+    Integer InsertFeedBack(FeedBack feedback);
+
+
+}

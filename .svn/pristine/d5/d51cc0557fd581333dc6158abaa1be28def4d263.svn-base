@@ -1,0 +1,92 @@
+package com.example.demo.admin;
+
+import com.example.mapper.Api.ApiMapper;
+import com.example.service.impl.RedisServiceImpl;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Controller;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.List;
+
+@Controller
+public class CommonController implements Serializable {
+    private Logger logger = Logger.getLogger(getClass());
+
+    @Autowired
+    public ApiMapper apiMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedisServiceImpl redisService;
+
+    /**
+     * 缓存
+     * @param key 缓存key值
+     * @param map 缓存数据
+     * @param type 0:表示新增 1:表示web查询
+     * * */
+    public List RedisCache(String key, List map,Integer type){
+        try {
+            boolean exists = redisTemplate.hasKey(key);
+            if(type==1 && exists){
+                List first_page = (List) redisService.getValue(key);
+                System.out.println("读取缓存数据"+key+":"+first_page);
+                logger.info("读取缓存数据"+key+":"+first_page);
+                return first_page;
+            }else {
+                //新增数据时先删除缓存
+                redisTemplate.delete(key);
+                //新增数据时存入缓存
+                redisService.valuePut(key,map);
+                logger.info("后台操作"+key+":"+map);
+                System.out.println("后台操作"+key+":"+map);
+                return  map;
+            }
+        }catch (Exception e){
+            System.out.println("异常"+e+":"+map);
+            return  map;
+        }
+    }
+
+    /**
+     * 视图编辑返回状态
+     * @param status 执行状态
+     * @param route  执行后跳转路径 */
+    PrintWriter return_status(Integer status, String route, HttpServletResponse response) throws Exception {
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.flush();
+        if(status==1){
+            out.println("<script>");
+            out.println("var index = parent.layer.getFrameIndex(window.name);" +
+                    "parent.layer.close(index);parent.location.href='"+route+"';");
+            out.println("</script>");
+        }else {
+            out.println("<script>");
+            out.println("alert('保存失败');");
+            out.println("history.back();");
+            out.println("</script>");
+        }
+        return out;
+    }
+
+    /**
+     * 分类类别 用于轮播位置
+     * @return 返回类别数组
+     */
+    public String[] Class_Type(){
+        String[] x={"首页",
+                "产品中心",
+                "成功案例",
+                "新闻中心",
+                "关于康尔泰",
+                "联系我们"};
+        return x;
+    }
+
+}

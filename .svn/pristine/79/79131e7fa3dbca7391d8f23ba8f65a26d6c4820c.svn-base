@@ -1,0 +1,11 @@
+package com.example.service;
+import com.example.model.Menu;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+/*用户列表接口*/
+public interface MenuService {
+    //用户列表  返回是 User 对象类别
+    List<Menu> getAll();
+}

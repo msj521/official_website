@@ -1,0 +1,104 @@
+package com.example.model;
+import com.example.config.DateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+import java.util.Date;
+
+@Repository
+public class User implements Serializable {
+	
+	private int fid;
+	private String user_name;
+	private String password;
+	private String email;
+	private String record_status;
+	private String tel;
+	private Date create_time;
+
+	@JsonSerialize(using = DateSerializer.class)
+	public Date getCreate_time() {
+		return create_time;
+	}
+
+	public void setCreate_time(Date create_time) {
+		this.create_time = create_time;
+	}
+
+	public int getFid() {
+		return fid;
+	}
+
+
+	public void setFid(int fid) {
+		this.fid = fid;
+	}
+
+
+	public String getUser_name() {
+		return user_name;
+	}
+
+
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+
+
+	public String getPassword() {
+		return password;
+	}
+
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+	public String getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
+	public String getRecord_status() {
+		return record_status;
+	}
+
+
+	public void setRecord_status(String record_status) {
+		this.record_status = record_status;
+	}
+
+
+	public String getTel() {
+		return tel;
+	}
+
+
+	public void setTel(String tel) {
+		this.tel = tel;
+	}
+
+
+	public User() {
+	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"fid=" + fid +
+				", user_name='" + user_name + '\'' +
+				", password='" + password + '\'' +
+				", email='" + email + '\'' +
+				", record_status='" + record_status + '\'' +
+				", tel='" + tel + '\'' +
+				", create_time=" + create_time +
+				'}';
+	}
+}

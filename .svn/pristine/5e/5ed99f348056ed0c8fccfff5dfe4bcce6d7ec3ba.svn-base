@@ -1,0 +1,20 @@
+package com.example.demo.admin;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+@Controller
+public class IndexController extends CommonController{
+
+    @RequestMapping("/index")
+    public String Index(Model model){
+        model.addAttribute("title","首页");
+        return "/admin/index/index";
+    }
+
+    @RequestMapping("/welcome")
+    public String Welcome(Model model) {
+        model.addAttribute("title","首页");
+        return "/admin/index/welcome";
+    }
+}

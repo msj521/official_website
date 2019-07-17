@@ -1,0 +1,253 @@
+package com.example.demo.web;
+
+import com.example.mapper.Api.ApiMapper;
+import com.example.model.FeedBack;
+import com.example.model.News;
+import com.example.service.impl.RedisServiceImpl;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+public class WebController{
+
+    @Autowired
+    public ApiMapper apiMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedisServiceImpl redisService;
+
+    public List Comment(String key, List map){
+
+        try {
+            /*新增数据时先删除缓存*/
+            redisTemplate.delete(key);
+            /*新增数据时存入缓存*/
+            redisService.valuePut(key,map);
+            boolean exists = redisTemplate.hasKey(key);
+            if(exists){
+                List first_page = (List) redisService.getValue(key);
+                System.out.println("读取缓存数据"+key+":"+first_page);
+                return first_page;
+            }else {
+                System.out.println("读取数据库数据"+key+":"+map);
+                return  map;
+            }
+        }catch (Exception e){
+            return (List) e;
+        }
+    }
+
+    /*公用头部*/
+    public Model Banner(Integer type, Model model){
+        boolean exists = redisTemplate.hasKey("menu_list");
+        if(!exists){
+            System.out.println("数据库"+type);
+            model.addAttribute("menu_list",apiMapper.GetMenuList());
+            model.addAttribute("banner_list",apiMapper.GetBannerList(type));
+        }else {
+            System.out.println("缓存"+type);
+            model.addAttribute("menu_list",redisService.getValue("menu_list"));
+            model.addAttribute("banner_list",redisService.getValue("banner_list"));
+        }
+        return model;
+    }
+    //轮播图
+    @RequestMapping("/banner")
+    public Map<String, Object> BannerList(){
+        Map<String ,Object> map= new HashMap<>();
+        map.put("code","200");
+        map.put("msg","请求成功");
+        map.put("banner_list",apiMapper.GetBannerList(1));
+        System.out.println(map);
+        return map;
+    }
+
+    //导航栏
+    @RequestMapping("/menu")
+    public Map<String, Object> menuList(){
+        Map<String ,Object> map= new HashMap<>();
+        map.put("code","200");
+        map.put("msg","请求成功");
+        map.put("menu_list",apiMapper.GetMenuList());
+        System.out.println(map);
+        return map;
+    }
+    //首页
+    @RequestMapping("/")
+    public String Index(Model model){
+        Banner(1,model);
+        model.addAttribute("class_list",Comment("class_list", apiMapper.GetClassList(1)));
+        model.addAttribute("news_list",Comment("news_list", apiMapper.GetNewsList(10)));
+        model.addAttribute("status", "1");
+        model.addAttribute("menu", "/");
+        model.addAttribute("title", "康尔泰");
+        return "web/index";
+    }
+
+    //产品中心:center 成功案例:case
+    @RequestMapping("/product/{type}")
+    public String ClassList(@PathVariable("type") String type,Model model){
+        int class_id;
+        String title;
+        String key;
+        if(type.equals("center")){
+            key="center";
+            class_id=2;
+            title="产品中心";
+        }else if(type.equals("case")){
+            key="case";
+            class_id=3;
+            title="应用案例";
+        }else {
+            class_id=0;
+            key="center";
+            title="康尔泰";
+        }
+        Banner(class_id,model);
+        model.addAttribute("product_type",Comment(key,apiMapper.GetClassList(class_id)));
+        model.addAttribute("title", title);
+        model.addAttribute("menu", "/product/"+key);
+        model.addAttribute("status", "0");
+        return "web/product";
+    }
+
+    //产品
+    @RequestMapping("/product/{type}/{en}")
+    public String ProductList(@PathVariable(value = "en") String en,
+                              @PathVariable("type") String type,Model model){
+        int class_id;
+        int class_type;
+        String title;
+        String key;
+        Banner(1,model);
+        if(type.equals("center")){
+            if(en.equals("agent")){
+                class_id=5;
+            }else if(en.equals("meeting")){
+                class_id=6;
+            }else {
+                class_id=4;
+            }
+            key="center";
+            class_type=1;
+            title="产品中心";
+        }else{
+            if(en.equals("agent")){
+                class_id=8;
+            }else if(en.equals("meeting")){
+                class_id=9;
+            }else {
+                class_id=7;
+            }
+            key="case";
+            class_type=2;
+            title="应用案例";
+        }
+        model.addAttribute("product_list",Comment("product_list_"+en,apiMapper.GetProductInfo(class_type,class_id)));
+        model.addAttribute("title", title);
+        model.addAttribute("menu", "/product/"+key);
+        model.addAttribute("status", "0");
+        return "web/product_details";
+    }
+
+    //新闻中心
+    @RequestMapping("/article/{type}")
+    public String NewsList(Model model,
+            @RequestParam(value = "fid",defaultValue = "0",required = false) Integer fid,
+            @RequestParam(value = "page",defaultValue = "0",required = false) Integer page,
+            @RequestParam(value = "size",defaultValue = "10",required = false) Integer size,
+                           @PathVariable("type") String type){
+        Integer class_id=type.equals("news")?10:11;
+        String key;
+        Banner(4,model);
+        model.addAttribute("news_class",Comment("news_class",apiMapper.GetClassList(4)));
+        if(fid>0){
+            key="news_info_"+fid;
+            model.addAttribute("news_info",Comment(key,apiMapper.GetNewsInfo(fid)));
+        }else{
+            key="news_list_"+class_id;
+            //Comment(key,apiMapper.GetNewsList(class_id));
+            //1. 在参数里接受当前是第几页 根据page ，以及每页显示多少条数据 size。 默认值分别是0和10。
+            //2. 根据page,size进行分页，并且设置id 倒排序
+            PageHelper.startPage(page,size,"fid desc");
+            //3. 因为PageHelper的作用，这里就会返回当前分页的集合了
+            List<News> cs =  Comment(key,apiMapper.GetNewsList(class_id));
+            //4. 根据返回的集合，创建PageInfo对象
+            PageInfo<News> news_list = new PageInfo<>(cs);
+            model.addAttribute("news_list",news_list.getList());
+            model.addAttribute("total",news_list.getTotal());
+        }
+        model.addAttribute("menu", "/article/news");
+        model.addAttribute("status", "0");
+        model.addAttribute("class_id", class_id);
+        model.addAttribute("title", "新闻中心");
+        return "web/news";
+    }
+
+    //关于康尔泰
+    @RequestMapping("/about")
+    public String AboutInfo(Model model){
+        Banner(5,model);
+        model.addAttribute("about",apiMapper.GetAboutInfo().getAbout_us());
+        model.addAttribute("menu", "/about");
+        model.addAttribute("status", "0");
+        model.addAttribute("title", "关于康尔泰");
+        return "web/about";
+    }
+
+    //联系我们
+    @RequestMapping("/contact")
+    public String ContactInfo(Model model){
+        Banner(6,model);
+        //System.out.println(apiMapper.GetAboutInfo().getContact_us());
+        model.addAttribute("contact", apiMapper.GetAboutInfo().getContact_us());
+        model.addAttribute("menu", "/contact");
+        model.addAttribute("status", "0");
+        model.addAttribute("title", "联系我们");
+        return "web/contact";
+    }
+
+    //意见反馈
+    @ResponseBody
+    @RequestMapping(value = "/feedback")
+    public Map<String, Object> SubmitContact(FeedBack feedback) {
+        Map<String, Object> map = new HashMap<>();
+        //System.out.println(feedback);
+        if(feedback.getContent()==null ||feedback.getTel()==null || feedback.getUser_name()==null){
+            map.put("code", "401");
+            map.put("msg", "必填项必填！");
+        }else {
+            feedback.setCreate_time(LocalDateTime.now());
+            feedback.setRecord_status("1");
+            Integer status= apiMapper.InsertFeedBack(feedback);
+            if(status>0){
+                map.put("code", "200");
+                map.put("msg", "感谢您的反馈，我们会及时与你联系");
+            }else {
+                map.put("code", "402");
+                map.put("msg", "提交失败");
+            }
+        }
+        //System.out.println(map);
+        return map;
+    }
+
+
+
+
+}

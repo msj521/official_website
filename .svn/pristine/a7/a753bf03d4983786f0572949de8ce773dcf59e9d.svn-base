@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+	<#--header-->
+	<#include "header.ftl">
+	<#--menu-->
+	<#include "menu.ftl">
+
+	<div class="ctlist" style="background: #F7F6F6;">
+			<div class="ct_main">
+				<div class="chanp_info_lf">
+					<ul>
+						<#list product_list as v>
+							<li><a href="${v.jump_url}" >${v.title}</a></li>
+						</#list>
+						<li><a href="#" class="active">督查系统</a></li>
+						<li><a href="#">医习之地</a></li>
+						<li><a href="#">CSSD</a></li>
+						<li><a href="#">ESSD</a></li>
+					</ul>
+				</div>
+				<div class="chanp_info_rg">
+					<div class="chanp_info_rg_ct">
+						文本编辑渲染
+					</div>
+					<div class="anli_list">
+						<h2>成功案例</h2>
+						<div class="anli_listct">
+							<div class="anli_listct_lf">
+								<ul>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li></li>
+								</ul>
+							</div>
+							<div class="anli_listct_rg">
+								<a href="#">更多..</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	<#--footer-->
+	<#include "footer.ftl">
+	</body>
+</html>

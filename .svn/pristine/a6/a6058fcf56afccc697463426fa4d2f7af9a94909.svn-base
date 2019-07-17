@@ -1,0 +1,43 @@
+package com.example.service.impl;
+import com.example.mapper.User.UserMapper;
+import com.example.model.User;
+import com.example.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+
+@Repository
+@Transactional
+public class UserServiceImpl implements UserService {
+
+    /*  Autowired表示自动注入  自动注入数据库配置模板*/
+    @Autowired
+    public JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    /*用户列表实现类   jdbcTemplate*/
+    @Override
+    public List<UserService> getUser(Integer fid) {
+        String sql="select * from enduser_info where fid!=?";
+        List<UserService> UserList = jdbcTemplate.query(sql,new Object[]{fid},new BeanPropertyRowMapper(User.class));
+        return UserList;
+    }
+
+    //返回查询状态 userMapper
+    @Override
+    public List<User> findGetUser(String record_status) {
+        return userMapper.findByUsername(record_status);
+    }
+
+    //用户列表 userMapper
+    @Override
+    public List<User> getAll() {
+        return userMapper.findAll();
+    }
+
+}

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.Admin.AdminMapper" >
+
+    <!--批量删除 导航栏-->
+    <delete id="menu_delete" parameterType="com.example.model.Menu">
+        delete from base_menu_info where fid in (${value})
+    </delete>
+
+    <!--批量标记删除 导航栏-->
+    <update id="menu_tag_delete" parameterType="com.example.model.Menu">
+        update base_menu_info set record_status=2 where fid in (${value})
+    </update>
+
+    <!--批量删除 意见反馈-->
+    <delete id="feedback_delete" parameterType="com.example.model.FeedBack">
+        delete from server_feed_back where fid in (${value})
+    </delete>
+
+    <!--批量标记删除 意见反馈-->
+    <update id="feedback_tag_delete" parameterType="com.example.model.FeedBack">
+        update server_feed_back set record_status=2 where fid in (${value})
+    </update>
+
+
+    <!--批量删除 产品-->
+    <delete id="product_delete" parameterType="com.example.model.Product">
+        delete from product_center_info where fid in (${value})
+    </delete>
+
+    <!--批量标记删除 产品-->
+    <update id="product_tag_delete" parameterType="com.example.model.Product">
+        update product_center_info set record_status=2 where fid in (${value})
+    </update>
+
+
+    <!--产品加载图片-->
+    <select id="product_get_images" resultType="com.example.model.Source">
+        SELECT * FROM base_source_info where fid in (${value})
+    </select>
+
+    <!--批量删除 新闻-->
+    <delete id="news_delete" parameterType="com.example.model.News">
+        delete from news_center_info where fid in (${value})
+    </delete>
+
+    <!--批量标记删除 新闻-->
+    <update id="news_tag_delete" parameterType="com.example.model.News">
+        update news_center_info set record_status=2 where fid in (${value})
+    </update>
+
+
+    <!--批量删除 轮播图-->
+    <delete id="banner_delete" parameterType="com.example.model.News">
+        delete from base_banner_info where fid in (${value})
+    </delete>
+
+    <!--批量标记删除 轮播图-->
+    <update id="banner_tag_delete" parameterType="com.example.model.News">
+        update base_banner_info set record_status=2 where fid in (${value})
+    </update>
+
+    <!--批量删除 基础资料分类-->
+    <delete id="class_delete" parameterType="com.example.model.ClassType">
+        delete from base_class_conf where fid in (${value})
+    </delete>
+
+    <!--批量标记删除 基础资料分类-->
+    <update id="class_tag_delete" parameterType="com.example.model.ClassType">
+        update base_class_conf set record_status=2 where fid in (${value})
+    </update>
+
+</mapper>

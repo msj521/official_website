@@ -1,0 +1,200 @@
+package com.example.mapper.Admin;
+
+import com.example.model.*;
+import org.apache.ibatis.annotations.*;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+@Transactional
+@Mapper
+public interface AdminMapper {
+
+    /*获取分类*/
+    @Select("select * from `v_class` where record_status=1 and class_type=#{class_type}")
+    List<ClassType> get_class(Integer class_type);
+    /**
+     * 用户登录
+     * */
+    /*判断用户是否存在*/
+    @Select("select * from `user_info` where tel=#{tel}")
+    User user_info(String tel);
+
+    /*验证用户密码*/
+    @Select("select * from user_info where tel=#{tel} and password=#{password}")
+    User login(String tel,String password);
+
+
+    /**
+     * 导航栏
+     * */
+    @Select("select * from base_menu_info where route like CONCAT('%',#{string},'%') or menu_name like CONCAT('%',#{string},'%') order by fid desc")
+    List<Menu> menu_list(@Param("string") String string);
+
+    /*编辑一条导航栏*/
+    @Select("select * from base_menu_info where fid= #{fid}")
+    Menu menu_info(@Param("fid") Integer fid);
+
+    /*导航栏更新*/
+    @Update("update base_menu_info set menu_name=#{menu_name},route=#{route},record_status=#{record_status} where fid=#{fid}")
+    Integer menu_update(Menu menu);
+    //删除
+    /*type==-1标记删除*/
+    //@Update("update base_menu_info set record_status=#{record_status} where fid in #{fid} ")
+    @Update({"<script>",
+            "update base_menu_info",
+            "<set>",
+            "<if test='record_status != null'>",
+            "record_status = #{record_status} ,",
+            "</if>",
+            "</set>",
+            "where fid in (#{fid})",
+            "</script>"})
+    Integer menu_update_status(@Param("fid") String fid, @Param("record_status") String record_status);
+
+    /*2彻底删除*/
+    @Delete("delete from base_menu_info where fid=#{fid}")
+    Integer menu_del(@Param("fid") String fid);
+
+    //增
+    @Insert("INSERT INTO base_menu_info(menu_name,route,record_status,create_time)VALUES" +
+            "(#{menu_name},#{route},#{record_status},#{create_time})")
+    Integer menu_add(Menu menu);
+
+    /**
+     * 轮播图
+     */
+    @Select({"<script>",
+            "select * from v_banner",
+            "WHERE 1=1",
+
+            "<when test='title != null'>",
+            "and title like CONCAT('%',#{title},'%') ",
+            "</when>",
+
+            "<when test='location != null'>",
+            "and location = #{location} ",
+            "</when>",
+
+            "order by fid desc",
+            "</script>"})
+    List<Banner> banner_list(Banner banner);
+
+    @Select("select * from v_banner where fid= #{fid}")
+    Banner banner_info(Integer fid);
+
+    @Delete("delete from base_banner_info where fid=#{fid}")
+    Integer banner_del(Integer fid);
+
+    @Insert("INSERT INTO base_banner_info(title,location,images_id,sort,record_status,create_time)VALUES" +
+            "(#{title},#{location},#{images_id},#{sort},#{record_status},#{create_time})")
+    Integer banner_add(Banner banner);
+
+    @Update("update base_banner_info set title=#{title},location=#{location},images_id=#{images_id}," +
+            "sort=#{sort},record_status=#{record_status} where fid=#{fid}")
+    Integer banner_update(Banner banner);
+
+    /**
+     *基础资料
+     */
+    @Select({"<script>",
+            "select * from v_class",
+            "WHERE 1=1",
+
+            "<when test='jump_url != null'>",
+            "and ( jump_url like CONCAT('%',#{jump_url},'%') " +
+                    "or remark like CONCAT('%',#{remark},'%') " +
+                    "or class_name_zh like CONCAT('%',#{class_name_zh},'%') )",
+            "</when>",
+
+            "<when test='class_type != null'>",
+            "and class_type = #{class_type} ",
+            "</when>",
+
+            "order by fid desc",
+            "</script>"})
+    List<ClassType> class_list(ClassType classType);
+
+    @Select("select * from v_class where fid= #{fid}")
+    ClassType class_info(Integer fid);
+
+    @Delete("delete from base_class_conf where fid=#{fid}")
+    Integer class_del(Integer fid);
+
+    @Insert("INSERT INTO base_class_conf(class_name_zh,jump_url,images_id,class_type,remark,sort,record_status,create_time)" +
+            "VALUES(#{class_name_zh},#{jump_url},#{images_id},#{class_type},#{remark},#{sort},#{record_status},#{create_time})")
+    Integer class_add(ClassType classType);
+
+    @Update("update base_class_conf set class_name_zh=#{class_name_zh},jump_url=#{jump_url},images_id=#{images_id}," +
+            "class_type=#{class_type},sort=#{sort},remark=#{remark},record_status=#{record_status} where fid=#{fid}")
+    Integer class_update(ClassType classType);
+
+    /**
+     *新闻中心
+     * 注解动态查询
+     * @param news
+     * @return
+     */
+    @Select({"<script>",
+            "select * from v_news",
+            "WHERE 1=1",
+
+            "<when test='title != null'>",
+            "and title like CONCAT('%',#{title},'%') ",
+            "</when>",
+
+            "<when test='class_id != null'>",
+            "and class_id = #{class_id} ",
+            "</when>",
+
+            "order by fid desc",
+            "</script>"})
+    List<News> news_list(News news);
+
+    @Select("select * from v_news where fid= #{fid}")
+    News news_info(Integer fid);
+
+    @Delete("delete from news_center_info where fid=#{fid}")
+    Integer news_del(Integer fid);
+
+    @Insert("INSERT INTO news_center_info(title,digest,images_id,class_id,content,sort,record_status,create_time)" +
+            "VALUES(#{title},#{digest},#{images_id},#{class_id},#{content},#{sort},#{record_status},#{create_time})")
+    Integer news_add(News news);
+
+    @Update("update news_center_info set title=#{title},digest=#{digest},images_id=#{images_id}," +
+            "class_id=#{class_id},sort=#{sort},content=#{content},record_status=#{record_status} where fid=#{fid}")
+    Integer news_update(News news);
+
+
+    /**
+     * 官网声明
+     */
+    @Select("select * from server_about_us")
+    List<AboutUs> platform_list();
+
+    @Select("select * from server_about_us where fid=#{fid}")
+    AboutUs platform_info(Integer fid);
+
+    /***
+     * 动态执行更新数据
+     * @param aboutUs
+     * @return
+     */
+    @Update({"<script>",
+            "update server_about_us",
+            "<set>",
+            "<if test='about_us != null'>",
+            "about_us = #{about_us} ,",
+            "</if>",
+            "<if test='contact_us != null'>",
+            "contact_us = #{contact_us} ,",
+            "</if>",
+            "<if test='opinion != null'>",
+            "opinion = #{opinion} ,",
+            "</if>",
+            "</set>",
+            "where fid = #{fid}",
+            "</script>"})
+    Integer platform_update(AboutUs aboutUs);
+
+}

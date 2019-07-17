@@ -1,0 +1,55 @@
+package com.example.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.*;
+
+@Configuration
+public class MyInterceptor implements WebMvcConfigurer {
+
+    @Value("${Environment.Path}")
+    private String Environment;
+
+    @Autowired
+    private LoginIntercepter loginIntercepter;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        InterceptorRegistration addInterceptor = registry.addInterceptor(loginIntercepter);
+        // 排除配置
+        addInterceptor.excludePathPatterns("/error");
+        addInterceptor.excludePathPatterns("/static/**");//排除静态资源
+        addInterceptor.excludePathPatterns("/index","/login","/logout","/loginVerify");
+        // 拦截配置
+        addInterceptor.addPathPatterns("/banner/*/**","/menu/*/**");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/META-INF/resources/");
+
+        //图片上传即时显示配置
+        String path="file:"+Environment;
+
+        registry.addResourceHandler("/web/images/**").addResourceLocations(path);
+    }
+
+    private CorsConfiguration buildConfig() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("*"); // 允许任何域名使用
+        corsConfiguration.addAllowedHeader("*"); // 允许任何头
+        corsConfiguration.addAllowedMethod("*"); // 允许任何方法（post、get等）
+        return corsConfiguration;
+    }
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", buildConfig()); // 对接口配置跨域设置
+        return new CorsFilter(source);
+    }
+}

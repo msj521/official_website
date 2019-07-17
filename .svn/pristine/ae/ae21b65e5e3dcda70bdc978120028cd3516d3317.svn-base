@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+	<#--header-->
+	<#include "header.ftl">
+	<#--menu-->
+	<#include "menu.ftl">
+	<#--banner-->
+	<#include "banner.ftl">
+
+		<div class="ctlist">
+			<div class="ct_main">
+				<div class="new_nav">
+					<#list news_class as v>
+						<a href="${v.jump_url}"
+								<#if (v.fid==class_id) >
+									class="active"
+								</#if>
+						>${v.class_name_zh}</a>
+					</#list>
+
+				</div>
+				<div class="news_list">
+					<ul>
+						<#list news_list as v>
+							<li>
+								<div class="news_img">
+									<a href="#"><img src="/images/pic_news1.png" /></a>
+								</div>
+								<div class="news_txt">
+									<a href="#"><h1>${v.title}</h1></a>
+								</div>
+							</li>
+						</#list>
+					</ul>
+				</div>
+				<div class="pagelist">
+					<div class="M-box2"></div>
+				</div>
+			</div>
+		</div>
+
+	<#--footer-->
+	<#include "footer.ftl">
+
+	</body>
+</html>
+<script type="text/javascript">
+$(function(){
+	$('.M-box2').pagination({
+	    coping: true,
+	    homePage: '首页',
+	    endPage: '末页',
+	    prevContent: '上页',
+	    nextContent: '下页'
+	});
+})
+	
+</script>
+

@@ -1,0 +1,109 @@
+package com.example.model;
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+
+@Repository
+public class Menu implements Serializable {
+
+	private Integer fid;
+	private String menu_name;
+	private String route;
+	private Integer sort;
+	private Integer type;
+	private String record_status;
+	private String create_time;
+	private String icon_cls;
+
+	public Integer getFid() {
+		return fid;
+	}
+
+	public void setFid(Integer fid) {
+		this.fid = fid;
+	}
+
+	public String getMenu_name() {
+		return menu_name;
+	}
+
+	public void setMenu_name(String menu_name) {
+		this.menu_name = menu_name;
+	}
+
+	public String getRoute() {
+		return route;
+	}
+
+	public void setRoute(String route) {
+		this.route = route;
+	}
+
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public String getRecord_status() {
+		return record_status;
+	}
+
+	public void setRecord_status(String record_status) {
+		this.record_status = record_status;
+	}
+
+	public String getCreate_time() {
+		return create_time;
+	}
+
+	public void setCreate_time(String create_time) {
+		this.create_time = create_time;
+	}
+
+	public String getIcon_cls() {
+		return icon_cls;
+	}
+
+	public void setIcon_cls(String icon_cls) {
+		this.icon_cls = icon_cls;
+	}
+
+	public Menu() {
+	}
+
+	public Menu(Integer fid, String menu_name, String route, Integer sort, Integer type, String record_status, String create_time, String icon_cls) {
+		this.fid = fid;
+		this.menu_name = menu_name;
+		this.route = route;
+		this.sort = sort;
+		this.type = type;
+		this.record_status = record_status;
+		this.create_time = create_time;
+		this.icon_cls = icon_cls;
+	}
+
+	@Override
+	public String toString() {
+		return "Menu{" +
+				"fid=" + fid +
+				", menu_name='" + menu_name + '\'' +
+				", route='" + route + '\'' +
+				", sort=" + sort +
+				", type=" + type +
+				", record_status='" + record_status + '\'' +
+				", create_time='" + create_time + '\'' +
+				", icon_cls='" + icon_cls + '\'' +
+				'}';
+	}
+}

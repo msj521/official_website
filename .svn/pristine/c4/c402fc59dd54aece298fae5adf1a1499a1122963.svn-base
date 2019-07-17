@@ -1,0 +1,20 @@
+package com.example.mapper.User;
+
+import com.example.model.User;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+
+
+/*用户列表接口*/
+public interface UserMapper {
+    //第一种方式
+    /*@Select("select * from `enduser_info` where fid=#{fid}")
+    List<User> findGetUser(@Param("fid") String fid);*/
+
+    //第二种方式 读取xml文件  返回类型要与 UserService 一至
+    List<User> findByUsername(String record_status);
+
+    List<User> findAll();
+}

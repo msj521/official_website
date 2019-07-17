@@ -1,0 +1,138 @@
+{include file="public/header" /}
+<body>
+        <!-- 右侧主体结束 -->
+    <div class="x-body layui-anim layui-anim-up">
+        <!-- 右侧内容框架，更改从这里开始 -->
+        <form class="layui-form" action='{$update|default="/"}' method="post" enctype="multipart/form-data">
+
+            <div class="layui-form-item">
+              <label for="class_id" class="layui-form-label">产品包类型<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <select name="product_type" lay-verify="required"  lay-search="" lay-filter="product_type"
+                {if condition="isset($list['fid']) and $list['fid'] neq 0"} disabled="disabled"{/if} >
+                  <option value="">--选择或者搜索--</option>
+                  {volist name="product_type" key="ko" id="vo"}
+                  <option value="{$ko}" {if condition="isset($list['product_type']) and $ko eq $list['product_type']"} selected="selected" {/if} >{$vo}</option>
+                  {/volist}
+                </select>
+              </div>
+            </div>
+
+            <div class="layui-form-item"  >
+              <label for="class_id" class="layui-form-label" id="class_name">直播分类<?php html_sign();?></label>
+              <div class="layui-input-block" id="class">
+                <select lay-search="" id="select">
+                    <option value="">--选择或者搜索--</option>
+                    {volist name="live_class" id="vo"}
+                      <option value="{$vo.fid}" {if condition="isset($list['class_id']) and $vo.fid eq $list['class_id']"} selected="selected" {/if} >{$vo.class_name_zh}</option>
+                    {/volist}
+                </select>
+              </div>
+            <div class="layui-input-block" id="class2">
+                <select  lay-search="" id="select2">
+                    <option value="">--选择或者搜索--</option>
+                    {volist name="video_class" id="vo"}
+                      <option value="{$vo.fid}" {if condition="isset($list['class_id']) and $vo.fid eq $list['class_id']"} selected="selected" {/if} >{$vo.class_name_zh}</option>
+                    {/volist}
+                </select>
+              </div>
+          </div>
+              
+            <div class="layui-form-item">
+              <label class="layui-form-label">产品名称<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <input type="text"  name="product_name" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input" value="{$list.product_name|default=''}">
+              </div>
+            </div>
+            
+            <div class="layui-form-item">
+              <label class="layui-form-label">单价<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <input type="text" name="price" lay-verify="required" placeholder="请输入" class="layui-input" value="{$list['price']|default=''}">
+              </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label for="description" class="layui-form-label">简介</label>
+                <div class="layui-input-block" >
+                    <textarea placeholder="请输入简介"  id="description" name="description" autocomplete="off"
+                    class="layui-textarea" style="height: 80px;">{$list.description|default=''}</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label xbs768">置顶</label>
+                  <div class="layui-input-block">
+                    <select name="sort" lay-verify="" >
+                      <option value="0">普通</option>
+                      <option value="1" {if condition="isset($list['sort']) and $list['sort'] eq 1"} selected="selected" {/if} >一级置顶</option>
+                      <option value="2" {if condition="isset($list['sort']) and $list['sort'] eq 2"} selected="selected" {/if} >二级置顶</option>
+                      <option value="3" {if condition="isset($list['sort']) and $list['sort'] eq 3"} selected="selected" {/if} >三级置顶</option>
+                    </select>     
+                  </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label xbs768">是否推荐</label>
+              <div class="layui-input-block">
+                <input type="radio" name="recommend" value="0" title="普通" checked>
+                <input type="radio" name="recommend" value="1" title="推荐" {if condition="isset($list['recommend']) and $list['recommend'] eq 1 "} checked {/if}>
+              </div>
+            </div>
+
+
+          <input type="hidden" name="fid" value="{$list.fid|default=''}">
+          {include file="public/upload" /}
+
+          <div class="layui-form-item">
+            <label class="layui-form-label xbs768">状态</label>
+            <div class="layui-input-block">
+              <input type="radio" name="record_status" value="1" title="启用" checked>
+              <input type="radio" name="record_status" value="2" title="禁用" {if condition="isset($list['record_status']) and $list['record_status'] eq 2"} checked {/if}>
+              <input type="radio" name="record_status" value="-1" title="标记删除" {if condition="isset($list['record_status']) and  $list['record_status'] eq -1"} checked {/if}>
+            </div>
+          </div>
+            <div class="layui-form-item">
+                <label for="L_sign" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
+        </form>
+        <!-- 右侧内容框架，更改从这里结束 -->
+    </div>
+    <script>
+    
+      $(document).ready(function(){
+        $msj={$list['product_type']|default=0};
+        publics($msj);
+      });
+
+      layui.use(['jquery','form','layer','table'], function(){
+          $ = layui.jquery;
+        var form = layui.form
+        ,layer = layui.layer;
+
+        form.on('select(product_type)', function(data){
+          publics(data.value);
+        });
+      });
+
+      function publics(type){
+        if(type==2){
+          $("#class").attr("style","display:none");
+          $("#class2").attr("style","display:block");
+          $("#select2").attr({"name":"class_id"});
+          $("#class_name").html('录播分类');
+        }else{
+          $("#class").attr("style","display:block");
+          $("#select").attr({"name":"class_id"});
+          $("#class2").attr("style","display:none");
+          $("#class_name").html('直播分类');
+        }
+    
+      }
+    </script>    
+</body>
+</html>

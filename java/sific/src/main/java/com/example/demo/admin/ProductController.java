@@ -1,0 +1,186 @@
+package com.example.demo.admin;
+
+import com.example.config.Layui;
+import com.example.mapper.Admin.AdminMapper;
+import com.example.model.Product;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.apache.tomcat.util.buf.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+
+@Controller
+@RequestMapping("/product")
+public class ProductController extends CommonController{
+
+    @Autowired
+    private AdminMapper adminMapper;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    /**
+     * 首页
+     * @param model 模型
+     * @return 返回视图
+     */
+    @RequestMapping("/index")
+    public String product(Model model) {
+        model.addAttribute("title","产品中心");
+        return "/admin/product/index";
+    }
+
+    @PostMapping("/gettype")
+    @ResponseBody
+    public List gettype(Product product){
+        Integer type=product.getClass_type();
+        //System.out.print(type);
+        if(type>0){
+            return adminMapper.get_class(type);
+        }else {
+            return adminMapper.get_class(2);
+        }
+    }
+
+    /**
+     * 导航栏 分页查询
+     * @param page   当前页
+     * @param size 几条
+     * @return 返回数据结构
+     */
+    @GetMapping("/list")
+    @ResponseBody
+    public Layui list(@RequestParam(value = "page",required = false,defaultValue = "1") int page,
+                      @RequestParam(value = "limit",required = false,defaultValue = "1") int size,Product product) {
+        PageHelper.startPage(page,size,"fid desc");
+        List<Product> cs =  adminMapper.product_list(product);
+        PageInfo<Product> list = new PageInfo<>(cs);
+        return Layui.data((int) list.getTotal(), list.getList());
+    }
+
+    /**
+     * 编辑
+     * @param model 模型
+     * @param fid 主键id
+     * @return 返回一条数据
+     */
+    @GetMapping("/edit")
+    public String Edit(Model model,@RequestParam(value = "fid",required = false) Integer fid) {
+        Product product=adminMapper.product_info(fid);
+        //获取图片集
+        String str=product.getData_images();
+        str=str==null || str.isEmpty()?"-1":str;
+        List arr_image=adminMapper.product_get_images(str);
+        model.addAttribute("list",product);
+        model.addAttribute("title","编辑");
+        model.addAttribute("arr_image",arr_image);
+        return "/admin/product/edit";
+    }
+
+
+    /**
+     *  新增 更新
+     * @param product 对象
+     * @param response 相应
+     * @return 返回结果状态
+     * @throws Exception 抛异常
+     */
+    @PostMapping("/update")
+    public PrintWriter update(Product product, HttpServletResponse response) throws Exception {
+        Integer status;
+        Integer fid=product.getFid();
+        if(fid>0){
+            status=adminMapper.product_update(product);
+        }else {
+            product.setCreate_time(new Date());
+            status=adminMapper.product_add(product);
+        }
+        Integer class_id=product.getClass_id();
+        Integer class_type=product.getClass_type();
+        if(status>0 && class_id>0 && class_type>0){
+            //数据变更保存换缓存
+            RedisCache("product_list_"+class_id,apiMapper.GetProductInfo(class_type,class_id),0);
+        }
+        return return_status(status,"/product/index",response);
+    }
+
+    /**
+     * 删除
+     * @param type 删除形式  1 彻底删除 2 标记删除
+     * @param fid 主键ID
+     * @param response 相应
+     * @return 返回执行状态
+     * @throws Exception 抛异常
+     */
+    @PostMapping("/del")
+    public PrintWriter Del(@RequestParam(value = "type",required = false) Integer type,
+                           @RequestParam(value = "fid",required = false) String fid,
+                           HttpServletResponse response) throws Exception{
+        Integer status;
+        if(type==2){
+            status=adminMapper.product_tag_delete(fid);
+        }else {
+            status=adminMapper.product_delete(fid);
+        }
+        String[] strArray = fid.split(",");
+        if(status>0){
+            Product info;
+            if(strArray.length>1){
+                for(String s : strArray){
+                    info = adminMapper.product_info(Integer.valueOf(s));
+                    Integer class_id=info.getClass_id();
+                    Integer class_type=info.getClass_type();
+                    RedisCache("product_list_"+class_id,apiMapper.GetProductInfo(class_type,class_id),0);
+                }
+            }else {
+                info = adminMapper.product_info(Integer.valueOf(fid));
+                Integer class_id=info.getClass_id();
+                Integer class_type=info.getClass_type();
+                RedisCache("product_list_"+class_id,apiMapper.GetProductInfo(class_type,class_id),0);
+            }
+        }
+        return return_status(status,"/product/index",response);
+    }
+
+
+    /**
+     *
+     * @param image_ids 代表convention_history_info 主键id
+     * @param fid 代表base_source_info 主键id
+     * @return 更新状态
+     */
+    @PostMapping("/del_source")
+    @ResponseBody
+    @Transactional
+    public Integer del_source(@RequestParam(value = "image_ids") String image_ids,
+                              @RequestParam(value = "fid") Integer fid){
+        Integer status=0;
+        if(image_ids.isEmpty() || fid<0) return status;
+        Product product=adminMapper.product_info(fid);
+        //处理资源fid 逗号隔开
+        List<String> list = new ArrayList<>();
+        //获取图片拼接id
+        String[] strArr = product.getData_images().split(",");
+        for (int i = 0; i < strArr.length; i++) {
+            if(strArr[i].equals(image_ids)) continue;
+            list.add(strArr[i]);
+        }
+        String new_images_id=StringUtils.join(list, ',');
+        String sql="update product_center_info set data_images=? where fid =?";
+        status=jdbcTemplate.update(sql,new_images_id,fid);
+        if(status==1){
+            RedisCache("product_list_"+product.getClass_id(),apiMapper.GetProductInfo(product.getClass_type(),product.getClass_id()),0);
+        }
+        return status;
+    }
+}

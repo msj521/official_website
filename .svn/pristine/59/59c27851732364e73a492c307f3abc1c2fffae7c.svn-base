@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+	<#--header-->
+	<#include "header.ftl">
+	<#--menu-->
+	<#include "menu.ftl">
+	<#--banner-->
+	<#include "banner.ftl">
+
+	<div class="ctlist">
+		<div class="ct_main">
+			<div class="ct_main_list">
+				<div class="guanyu_txt">
+					<span style="font-size: 36px;">上海康尔泰 </span>SIFIC代表的已经不再是一个论坛、一个微信号、一个网络平台，SIFIC代表的是一股蓬勃向上的动力和热情，代表的是一群有共同理想的人。让我们共同携手，将SIFIC感染网打造成中国最专业、最权威、规模最大的感染专业网站!
+				</div>
+				<div class="guanyu_img">
+					<img src="/web/images/pic_company.png" />
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="bannerlist2"></div>
+	<div class="ctlist">
+		<div class="ct_main">
+			<div class="lujin">
+				<img src="/web/images/pic_course.png" />
+			</div>
+		</div>
+	</div>
+	<#--footer-->
+	<#include "footer.ftl">
+	</body>
+</html>

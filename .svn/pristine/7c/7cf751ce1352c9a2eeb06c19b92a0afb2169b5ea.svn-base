@@ -1,0 +1,192 @@
+package com.example.model;
+import com.example.config.DateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.stereotype.Repository;
+import java.io.Serializable;
+import java.util.Date;
+
+@Repository
+public class Product implements Serializable {
+    private Integer fid;
+    private Integer class_type;
+    private Integer class_id;
+    private String  title;
+    private String  digest;
+    private String  jump_url;
+    private String  content;
+    private Integer images_id;
+    private Integer sort;
+    private Integer record_status;
+    private Integer creator_id;
+    private Date  create_time;
+    private String  file_path;
+    private String  data_images;
+    private String  images_list;
+    private String  class_name_zh;
+    private String  class_name_type;
+
+    public String getClass_name_zh() {
+        return class_name_zh;
+    }
+
+    public void setClass_name_zh(String class_name_zh) {
+        this.class_name_zh = class_name_zh;
+    }
+
+    public String getClass_name_type() {
+        return class_name_type;
+    }
+
+    public void setClass_name_type(String class_name_type) {
+        this.class_name_type = class_name_type;
+    }
+
+    public String getImages_list() {
+        return images_list;
+    }
+
+    public void setImages_list(String images_list) {
+        this.images_list = images_list;
+    }
+
+    public String getData_images() {
+
+        return data_images;
+    }
+
+    public void setData_images(String data_images) {
+        this.data_images = data_images;
+    }
+
+    public Integer getFid() {
+        return fid;
+    }
+
+    public void setFid(Integer fid) {
+        this.fid = fid;
+    }
+
+    public Integer getClass_type() {
+        return class_type;
+    }
+
+    public void setClass_type(Integer class_type) {
+        this.class_type = class_type;
+    }
+
+    public Integer getClass_id() {
+        return class_id;
+    }
+
+    public void setClass_id(Integer class_id) {
+        this.class_id = class_id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDigest() {
+        return digest;
+    }
+
+    public void setDigest(String digest) {
+        this.digest = digest;
+    }
+
+    public String getJump_url() {
+        return jump_url;
+    }
+
+    public void setJump_url(String jump_url) {
+        this.jump_url = jump_url;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Integer getImages_id() {
+        return images_id;
+    }
+
+    public void setImages_id(Integer images_id) {
+        this.images_id = images_id;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
+    public Integer getRecord_status() {
+        return record_status;
+    }
+
+    public void setRecord_status(Integer record_status) {
+        this.record_status = record_status;
+    }
+
+    public Integer getCreator_id() {
+        return creator_id;
+    }
+
+    public void setCreator_id(Integer creator_id) {
+        this.creator_id = creator_id;
+    }
+
+    @JsonSerialize(using = DateSerializer.class)
+    public Date getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(Date create_time) {
+        this.create_time = create_time;
+    }
+
+    public String getFile_path() {
+        return file_path;
+    }
+
+    public void setFile_path(String file_path) {
+        this.file_path = file_path;
+    }
+
+    public Product(){
+
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "fid=" + fid +
+                ", class_type=" + class_type +
+                ", class_id=" + class_id +
+                ", title='" + title + '\'' +
+                ", digest='" + digest + '\'' +
+                ", jump_url='" + jump_url + '\'' +
+                ", content='" + content + '\'' +
+                ", images_id=" + images_id +
+                ", sort=" + sort +
+                ", record_status=" + record_status +
+                ", creator_id=" + creator_id +
+                ", create_time=" + create_time +
+                ", file_path='" + file_path + '\'' +
+                ", data_images='" + data_images + '\'' +
+                ", images_list='" + images_list + '\'' +
+                ", class_name_zh='" + class_name_zh + '\'' +
+                ", class_name_type='" + class_name_type + '\'' +
+                '}';
+    }
+}

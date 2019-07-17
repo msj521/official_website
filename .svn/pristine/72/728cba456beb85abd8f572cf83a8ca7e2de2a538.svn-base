@@ -1,0 +1,33 @@
+package com.example.demo;
+
+import com.example.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping("user")
+public class UserController {
+
+    //自动注入 UserService
+    @Autowired
+    public UserService userService;
+
+    //用户列表
+    @RequestMapping("list")
+    public  String UserList(Model model){
+        //获取用户列表
+        model.addAttribute("list",userService.getAll());
+        System.out.println(userService.getAll());
+        return "user/list";
+    }
+
+    @RequestMapping("lists")
+    public  String UserSearch(Model model){
+        //查询状态为2
+        model.addAttribute("list",userService.findGetUser("2"));
+        return "user/list";
+    }
+
+}

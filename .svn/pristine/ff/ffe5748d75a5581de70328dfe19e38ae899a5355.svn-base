@@ -1,0 +1,63 @@
+{include file="public/header" /}
+<body>
+<div class="x-body layui-anim layui-anim-up">
+  <form class="layui-form" action="/sys/item/update" method="post" enctype="multipart/form-data">
+
+    <div class="layui-form-item">
+      <label for="class_name_zh" class="layui-form-label">名称<?php html_sign();?></label>
+      <div class="layui-input-block">
+        <input type="text" id="class_name_zh" name="class_name_zh" lay-verify="required" autocomplete="off"
+               value="{$list.class_name_zh|default=''}" class="layui-input">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label xbs768">基础分类<?php html_sign();?></label>
+        <div class="layui-input-block">
+          {if condition="isset($list['fid'])"} 
+            <input type="text" lay-verify="title"  disabled="disabled" class="layui-input"  value="{$list['class_type']|get_class_type}" >
+            <input type="hidden" name="class_type" value="{$list['class_type']}">
+          {else}
+          <select name="class_type" lay-verify="required" lay-search="" >
+            <option value="">直接选择或搜索选择</option>
+              {volist name="class_type" key="ko" id="vo"}
+              <option value="{$ko}">{$vo}</option>
+              {/volist}
+          </select>
+          {/if}
+        </div>
+    </div>
+    <input type="hidden" name="fid" value="{$list.fid|default=''}">
+	
+    <div class="layui-form-item">
+      <label for="sort" class="layui-form-label">排序</label>
+      <div class="layui-input-block">
+         <input type="text" class="layui-input" name="sort" value="{$list.sort|default=''}">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label for="remark" class="layui-form-label">备注</label>
+      <div class="layui-input-block">
+        <textarea placeholder="请输入内容" class="layui-textarea" type="text" id="remark" name="remark">{$list.remark|default=''}</textarea>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label xbs768">状态</label>
+      <div class="layui-input-block">
+        <input type="radio" name="record_status" value="1" title="启用" checked>
+        <input type="radio" name="record_status" value="2" title="禁用" {if condition="isset($list['record_status']) && $list['record_status'] eq 2"} checked {/if}>
+        <input type="radio" name="record_status" value="-1" title="标记删除" {if condition="isset($list['record_status']) &&  $list['record_status'] eq -1"} checked {/if}>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <button class="layui-btn" lay-filter="save" lay-submit="" type="submit">保存</button>
+    </div>
+  </form>
+</div>
+<script>
+</script>
+</body>
+</html>

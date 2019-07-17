@@ -1,0 +1,18 @@
+package com.example.enums;
+
+import java.util.List;
+
+enum StatusEnum{
+
+    CONTENT_EMPTY(402, "无任何数据",null);
+    private Integer code;
+    private String message;
+    private List data;
+
+    StatusEnum(Integer code, String message,List data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
+}

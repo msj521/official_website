@@ -1,0 +1,35 @@
+package com.example.config;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Configuration
+public class MyInterceptor implements WebMvcConfigurer {
+
+    @Autowired
+    private LoginIntercepter loginIntercepter;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        InterceptorRegistration addInterceptor = registry.addInterceptor(loginIntercepter);
+        // 排除配置
+        addInterceptor.excludePathPatterns("/error");
+        addInterceptor.excludePathPatterns("/static/**");//排除静态资源
+        addInterceptor.excludePathPatterns("/index","/admin","/login","/logout","/loginVerify");
+        // 拦截配置
+        addInterceptor.addPathPatterns("/banner/*/**","/menu/*/**");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/static/web/**").addResourceLocations("file:D:/phpStudy/PHPTutorial/WWW/KangTai_Java/java/sific/src/main/resources/static/web/images/");
+    }
+}

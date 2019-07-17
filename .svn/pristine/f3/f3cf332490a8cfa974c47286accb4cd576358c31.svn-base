@@ -1,0 +1,110 @@
+package com.example.model;
+
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+
+@Repository
+public class Source implements Serializable {
+    private Integer fid;
+    private String  file_name;
+    private String  file_path;
+    private Integer source_type;
+    private Integer source_size;
+    private Integer record_status;
+    private Integer creator_id;
+    private String  create_time;
+
+    public Integer getFid() {
+        return fid;
+    }
+
+    public void setFid(Integer fid) {
+        this.fid = fid;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+    public String getFile_path() {
+        return file_path;
+    }
+
+    public void setFile_path(String file_path) {
+        this.file_path = file_path;
+    }
+
+    public Integer getSource_type() {
+        return source_type;
+    }
+
+    public void setSource_type(Integer source_type) {
+        this.source_type = source_type;
+    }
+
+    public Integer getSource_size() {
+        return source_size;
+    }
+
+    public void setSource_size(Integer source_size) {
+        this.source_size = source_size;
+    }
+
+    public Integer getRecord_status() {
+        return record_status;
+    }
+
+    public void setRecord_status(Integer record_status) {
+        this.record_status = record_status;
+    }
+
+    public Integer getCreator_id() {
+        return creator_id;
+    }
+
+    public void setCreator_id(Integer creator_id) {
+        this.creator_id = creator_id;
+    }
+
+    public String getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(String create_time) {
+        this.create_time = create_time;
+    }
+
+    public Source(){
+
+    }
+
+    public Source(Integer fid, String file_name, String file_path, Integer source_type, Integer source_size, Integer record_status, Integer creator_id, String create_time) {
+        this.fid = fid;
+        this.file_name = file_name;
+        this.file_path = file_path;
+        this.source_type = source_type;
+        this.source_size = source_size;
+        this.record_status = record_status;
+        this.creator_id = creator_id;
+        this.create_time = create_time;
+    }
+
+    @Override
+    public String toString() {
+        return "Source{" +
+                "fid=" + fid +
+                ", file_name='" + file_name + '\'' +
+                ", file_path='" + file_path + '\'' +
+                ", source_type=" + source_type +
+                ", source_size=" + source_size +
+                ", record_status=" + record_status +
+                ", creator_id=" + creator_id +
+                ", create_time='" + create_time + '\'' +
+                '}';
+    }
+}

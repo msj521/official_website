@@ -1,0 +1,21 @@
+package com.example.service;
+
+import com.example.model.User;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+/*用户列表接口*/
+public interface UserService {
+
+    /*用户列表实现类   jdbcTemplate*/
+    List<UserService> getUser(Integer id);
+
+    //返回查询状态
+    List<User> findGetUser(String record_status);
+
+    //用户列表  返回是 User 对象类别
+    List<User> getAll();
+
+}

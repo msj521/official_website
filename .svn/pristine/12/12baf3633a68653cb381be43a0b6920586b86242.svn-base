@@ -1,0 +1,21 @@
+<#--首页轮播图-->
+<div class="bannerlist" style="float: left;">
+	<#if (status=="1" ) >
+		<div class="fullSlide">
+			<div class="bd">
+				<ul>
+					<#list banner_list as v>
+						<li _src="url(${v.file_path})" style="background:#E2025E center 0 no-repeat;"><a href="${v.jump_url}"></a></li>
+					</#list>
+				</ul>
+			</div>
+			<div class="hd"><ul></ul></div>
+			<span class="prev"></span>
+			<span class="next"></span>
+		</div>
+	<#else>
+		<#list banner_list as v>
+			<img src="${v.file_path}" />
+		</#list>
+	</#if>
+</div>

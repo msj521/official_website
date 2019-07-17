@@ -1,0 +1,56 @@
+package com.example.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+
+@Configuration
+//@EnableWebMvc //添加该注解，则是完全控制MVC，
+public class CrossConfig extends WebMvcConfigurerAdapter {
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+    }
+
+
+//    @Bean
+//    public SecurityInterceptor getSecurityInterceptor(){
+//        return  new SecurityInterceptor();
+//    }
+//    @Override
+//    public  void addInterceptors(InterceptorRegistry registry){
+//        InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
+//
+//        // 排除路径
+//        addInterceptor.excludePathPatterns("/");
+//        addInterceptor.excludePathPatterns("/admin");
+//        addInterceptor.excludePathPatterns("/Index");
+//        addInterceptor.excludePathPatterns("/loginVerify");
+//        addInterceptor.excludePathPatterns("/logout");
+//        // 排除资源请求
+//        addInterceptor.excludePathPatterns("/css/login/*.css");
+//        addInterceptor.excludePathPatterns("/js/login/**/*.js");
+//        addInterceptor.excludePathPatterns("/image/login/*.png");
+//    }
+//
+//    private class SecurityInterceptor extends HandlerInterceptorAdapter {
+//        @Override
+//        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)throws IOException {
+//            HttpSession session = request.getSession();
+//            if(session.getAttribute("tel")!=null){
+//                return true;
+//            }else {
+//                //response.sendRedirect("/admin");
+//                return false;
+//            }
+//        }
+//    }
+}

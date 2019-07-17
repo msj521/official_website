@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h1 align="center">用户列表</h1>
+<!-- 遍历用户结果 -->
+<table style="margin: auto;" border=1>
+  <tr>
+    <th width="5%">序号</th>
+    <th width="8%">名称</th>
+    <th width="10%">路由</th>
+    <th width="10%">图标</th>
+    <th width="10%">创建时间</th>
+    <th width="10%">状态</th>
+    <th width="16%">操作</th>
+  </tr>
+
+  <#list list as user>
+    <tr>
+      <th>${user.fid}</th>
+      <th>${user.menu_name}</th>
+      <th>${user.route}</th>
+      <th>
+        <img src="${request.contextPath}${user.icon_cls}" width="150px;"/>
+      </th>
+      <th>${user.create_time}</th>
+      <th>
+        <#if (user.record_status=="1") >
+          启用
+        <#else>
+          禁用
+        </#if>
+      </th>
+      <th>
+        <a href="${request.contextPath}/menu/edit/${user.fid}">修改</a>---
+        <a href="${request.contextPath}/menu/del/${user.fid}">删除</a>
+      </th>
+    </tr>
+  </#list>
+</table>
+</body>
+</html>

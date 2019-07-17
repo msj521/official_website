@@ -1,0 +1,122 @@
+package com.example.model;
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+@Repository
+public class FeedBack implements Serializable {
+
+	private Integer fid;
+	private String user_name;
+	private String tel;
+	private String content;
+	private String company;
+	private String record_status;
+	private LocalDateTime create_time;
+	private Integer creator_id;
+	private LocalDateTime update_time;
+
+	public Integer getFid() {
+		return fid;
+	}
+
+	public void setFid(Integer fid) {
+		this.fid = fid;
+	}
+
+	public String getUser_name() {
+		return user_name;
+	}
+
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+
+	public String getTel() {
+		return tel;
+	}
+
+	public void setTel(String tel) {
+		this.tel = tel;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public String getRecord_status() {
+		return record_status;
+	}
+
+	public void setRecord_status(String record_status) {
+		this.record_status = record_status;
+	}
+
+	public LocalDateTime getCreate_time() {
+		return create_time;
+	}
+
+	public void setCreate_time(LocalDateTime create_time) {
+		this.create_time = create_time;
+	}
+
+	public Integer getCreator_id() {
+		return creator_id;
+	}
+
+	public void setCreator_id(Integer creator_id) {
+		this.creator_id = creator_id;
+	}
+
+	public LocalDateTime getUpdate_time() {
+		return update_time;
+	}
+
+	public void setUpdate_time(LocalDateTime update_time) {
+		this.update_time = update_time;
+	}
+
+	public FeedBack(){
+
+	}
+
+	public FeedBack(Integer fid, String user_name, String tel, String content, String company, String record_status, LocalDateTime create_time, Integer creator_id, LocalDateTime update_time) {
+		this.fid = fid;
+		this.user_name = user_name;
+		this.tel = tel;
+		this.content = content;
+		this.company = company;
+		this.record_status = record_status;
+		this.create_time = create_time;
+		this.creator_id = creator_id;
+		this.update_time = update_time;
+	}
+
+	@Override
+	public String toString() {
+		return "FeedBack{" +
+				"fid=" + fid +
+				", user_name='" + user_name + '\'' +
+				", tel='" + tel + '\'' +
+				", content='" + content + '\'' +
+				", company='" + company + '\'' +
+				", record_status='" + record_status + '\'' +
+				", create_time=" + create_time +
+				", creator_id=" + creator_id +
+				", update_time=" + update_time +
+				'}';
+	}
+}

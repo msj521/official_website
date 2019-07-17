@@ -1,0 +1,322 @@
+package com.example.demo.web;
+
+import com.example.config.UUIDUtils;
+import com.example.demo.admin.CommonController;
+import com.example.mapper.Api.ApiMapper;
+import com.example.model.FeedBack;
+import com.example.model.News;
+import com.example.model.Source;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+public class WebController extends CommonController{
+
+    @Autowired
+    public ApiMapper apiMapper;
+
+    /**
+     * 公用头部
+     * @param location 轮播图位置
+     * @param model 模型
+     * @return
+     */
+    public Model Banner(Integer location, Model model){
+        model.addAttribute("menu_list",RedisCache("menu_list",apiMapper.GetMenuList(),1));
+        model.addAttribute("banner_list",RedisCache("banner_list_"+location,apiMapper.GetBannerList(location),1));
+        return model;
+    }
+    //轮播图
+    @RequestMapping("/banner")
+    public Map<String, Object> BannerList(){
+        Map<String ,Object> map= new HashMap<>();
+        map.put("code","200");
+        map.put("msg","请求成功");
+        map.put("banner_list",apiMapper.GetBannerList(1));
+        System.out.println(map);
+        return map;
+    }
+
+    //导航栏
+    @RequestMapping("/menu")
+    public Map<String, Object> menuList(){
+        Map<String ,Object> map= new HashMap<>();
+        map.put("code","200");
+        map.put("msg","请求成功");
+        map.put("menu_list",apiMapper.GetMenuList());
+        System.out.println(map);
+        return map;
+    }
+    //首页
+    @RequestMapping("/")
+    public String Index(Model model){
+        Banner(1,model);
+        model.addAttribute("class_list",RedisCache("class_list_1", apiMapper.GetClassList(1),1));
+        model.addAttribute("news_list",RedisCache("news_list_10", apiMapper.GetNewsList(10),1));
+        model.addAttribute("status", "1");
+        model.addAttribute("menu", "/");
+        model.addAttribute("title", "康尔泰");
+        return "web/index";
+    }
+
+    /**
+     *  产品中心:center 成功案例:case
+     * @param type 类型
+     * @param model  模型
+     * @return
+     */
+    @RequestMapping("/product/{type}")
+    public String ClassList(@PathVariable("type") String type, Model model){
+        //分类类型
+        int class_type;
+        String title;
+        String key;
+        if(type.equals("center")){
+            key="center";
+            class_type=2;
+            title="产品中心";
+        }else if(type.equals("case")){
+            key="case";
+            class_type=3;
+            title="应用案例";
+        }else {
+            class_type=2;
+            key="center";
+            title="康尔泰";
+        }
+        Banner(class_type,model);
+        model.addAttribute("product_type",RedisCache("class_list_"+class_type,apiMapper.GetClassList(class_type),1));
+        model.addAttribute("title", title);
+        model.addAttribute("menu", "/product/"+key);
+        model.addAttribute("status", "0");
+        return "web/product";
+    }
+
+    /**
+     * 产品中心-成功案例 详情
+     * @param en   分类
+     * @param type 类型
+     * @param model 模型
+     * @return
+     */
+    @RequestMapping("/product/{type}/{en}")
+    public String ProductList(@PathVariable(value = "en") String en,
+                              @PathVariable("type") String type,Model model){
+        int class_id;
+        int class_type;
+        String title;
+        String key;
+        //Banner(1,model);
+        if(type.equals("center")){
+            if(en.equals("agent")){
+                class_id=5;
+            }else if(en.equals("meeting")){
+                class_id=6;
+            }else {
+                class_id=4;
+            }
+            key="center";
+            class_type=1;
+            title="产品中心";
+        }else{
+            if(en.equals("agent")){
+                class_id=8;
+            }else if(en.equals("meeting")){
+                class_id=9;
+            }else {
+                class_id=7;
+            }
+            key="case";
+            class_type=2;
+            title="应用案例";
+        }
+        model.addAttribute("product_list",RedisCache("product_list_"+en,apiMapper.GetProductInfo(class_type,class_id),1));
+        model.addAttribute("title", title);
+        model.addAttribute("menu", "/product/"+key);
+        model.addAttribute("status", "0");
+        return "web/product_details";
+    }
+
+    /**
+     * 新闻中心
+     * @param model
+     * @param fid  新闻主键id
+     * @param page 页数
+     * @param size 几条
+     * @param type 新闻类型
+     * @return
+     */
+    @RequestMapping("/article/{type}")
+    public String NewsList(Model model,
+            @RequestParam(value = "fid",defaultValue = "0",required = false) Integer fid,
+            @RequestParam(value = "page",defaultValue = "0",required = false) Integer page,
+            @RequestParam(value = "size",defaultValue = "10",required = false) Integer size,
+                           @PathVariable("type") String type){
+        Integer class_id=type.equals("news")?10:11;
+        String key;
+        Banner(4,model);
+        model.addAttribute("news_class",RedisCache("class_list_4",apiMapper.GetClassList(4),1));
+        if(fid>0){
+            key="news_info_"+fid;
+            model.addAttribute("news_info",RedisCache(key,apiMapper.GetNewsInfo(fid),1));
+        }else{
+            key="news_list_"+class_id;
+            //RedisCache(key,apiMapper.GetNewsList(class_id));
+            //1. 在参数里接受当前是第几页 根据page ，以及每页显示多少条数据 size。 默认值分别是0和10。
+            //2. 根据page,size进行分页，并且设置id 倒排序
+            PageHelper.startPage(page,size,"fid desc");
+            //3. 因为PageHelper的作用，这里就会返回当前分页的集合了
+            List<News> cs =  RedisCache(key,apiMapper.GetNewsList(class_id),1);
+            //4. 根据返回的集合，创建PageInfo对象
+            PageInfo<News> news_list = new PageInfo<>(cs);
+            model.addAttribute("news_list",news_list.getList());
+            model.addAttribute("total",news_list.getTotal());
+        }
+        model.addAttribute("menu", "/article/news");
+        model.addAttribute("status", "0");
+        model.addAttribute("class_id", class_id);
+        model.addAttribute("title", "新闻中心");
+        return "web/news";
+    }
+
+    /**
+     * 关于康尔泰
+     * @param model
+     * @return
+     */
+    @RequestMapping("/about")
+    public String AboutInfo(Model model){
+        Banner(5,model);
+        model.addAttribute("about",apiMapper.GetAboutInfo().getAbout_us());
+        model.addAttribute("menu", "/about");
+        model.addAttribute("status", "0");
+        model.addAttribute("title", "关于康尔泰");
+        return "web/about";
+    }
+
+    /**
+     * 联系我们
+     * @param model
+     * @return
+     */
+    @RequestMapping("/contact")
+    public String ContactInfo(Model model){
+        Banner(6,model);
+        model.addAttribute("contact", apiMapper.GetAboutInfo().getContact_us());
+        model.addAttribute("menu", "/contact");
+        model.addAttribute("status", "0");
+        model.addAttribute("title", "联系我们");
+        return "web/contact";
+    }
+
+    /**
+     * 意见反馈
+     * @param feedback 意见数据对象
+     * @return 返回状态
+     */
+    @ResponseBody
+    @RequestMapping(value = "/feedback")
+    public Map<String, Object> SubmitContact(FeedBack feedback) {
+        Map<String, Object> map = new HashMap<>();
+        if(feedback.getContent()==null ||feedback.getTel()==null || feedback.getUser_name()==null){
+            map.put("code", "401");
+            map.put("msg", "必填项必填！");
+        }else {
+            feedback.setCreate_time(new Date());
+            feedback.setRecord_status("1");
+            Integer status= apiMapper.InsertFeedBack(feedback);
+            if(status>0){
+                map.put("code", "200");
+                map.put("msg", "感谢您的反馈，我们会及时与你联系");
+            }else {
+                map.put("code", "402");
+                map.put("msg", "提交失败");
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 图片上传
+     * *
+     * @param file  资源流
+     * @param images_id  图片fid
+     * @param source  资源对象
+     * */
+    @ResponseBody
+    @PostMapping(value = "/api/upload")
+    public Map<String, Object> upload_img(MultipartFile file, @RequestParam(value = "images_id") Integer images_id, Source source) {
+        Map<String, Object> map = new HashMap<>();
+
+        String path="D:\\phpStudy\\PHPTutorial\\WWW\\KangTai_Java\\java\\sific\\src\\main\\resources\\static\\web\\images\\"; //上传路径
+        //String path="D:\\java\\sific\\src\\main\\resources\\web\\images\\";
+        String fileName=file.getOriginalFilename();//获取文件名
+
+        Long filesize=file.getSize();
+
+        String Suffix=fileName.substring(fileName.lastIndexOf("."));//获取后缀名
+
+        String newfiele= UUIDUtils.getRandomNum(18)+Suffix;//新文件名
+
+        String newPath= path + newfiele;//文件新地址
+
+        File uploadFile = new File(newPath);
+
+        if (fileName != null && uploadFile!= null){
+            try {
+                String imagepath;
+                imagepath="/web/images/"+newfiele;
+                file.transferTo(uploadFile);//上传图片最终
+                Integer status;
+                Integer fid;
+                source.setFile_name(fileName);
+                source.setFile_path(imagepath);
+                source.setFile_size(filesize);
+                source.setRecord_status(1);
+
+                if(images_id>0){
+                    source.setFid(images_id);
+                    System.out.print(source);
+                    status=apiMapper.image_update(source);
+                    fid=images_id;
+                }else {
+                    source.setCreate_time(new Date());
+                    status=apiMapper.image_add(source);
+                    fid=source.getFid();
+                }
+
+                if(status==1){
+                    map.put("code", "200");
+                    map.put("data", fid);
+                    map.put("msg", "上传成功");
+                }else {
+                    map.put("code", "401");
+                    map.put("msg", "上传失败");
+                }
+            } catch (Exception e) {
+                // 业务方进行异常处理
+                map.put("code", "402");
+                map.put("msg", e);
+            }
+        }else{
+            map.put("code", "402");
+            map.put("msg", "文件不存在");
+        }
+        return map;
+    }
+
+}

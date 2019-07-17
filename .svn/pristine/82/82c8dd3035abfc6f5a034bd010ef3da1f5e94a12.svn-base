@@ -1,0 +1,10 @@
+<head>
+	<meta charset="UTF-8">
+	<title>${title}</title>
+	<link rel="stylesheet" type="text/css" href="/web/css/index.css"/>
+	<script type="text/javascript" src="/web/js/jquery.js" ></script>
+	<script type="text/javascript" src="/web/js/jquery.pagination.js" ></script>
+	<script type="text/javascript" src="/web/js/superslide.2.1.js" ></script>
+</head>
+<body>
+

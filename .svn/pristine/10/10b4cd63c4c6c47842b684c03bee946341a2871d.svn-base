@@ -1,0 +1,61 @@
+{include file="public/header" /}
+<body>
+        <!-- 右侧主体结束 -->
+    <div class="x-body layui-anim layui-anim-up">
+        <!-- 右侧内容框架，更改从这里开始 -->
+        <form class="layui-form" action='{$update|default="/"}' method="post" enctype="multipart/form-data">
+
+            <div class="layui-form-item">
+              <label for="class_id" class="layui-form-label">产品包类型<?php html_sign();?></label>
+              <div class="layui-input-block">
+                  <input type="text" disabled="disabled" autocomplete="off" class="layui-input" value="录播">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">产品名称<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <input type="text" disabled="disabled" autocomplete="off" class="layui-input" value="{$list.product_name|default=''}">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">章节标题<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <input type="text" autocomplete="off" lay-verify="required" name="section_name" placeholder="请输入章节标题" 
+                class="layui-input" value="{$list.title|default=''}">
+              </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label for="sort" class="layui-form-label">排序</label>
+                <div class="layui-input-block" >
+                    <input type="number" name="sort" lay-verify="required" class="layui-input" value="{$list.sort|default=''}">
+                </div>
+            </div>
+
+          <input type="hidden" name="product_type" value="2">
+          <input type="hidden" name="product_id" value="{$product_id|default=''}">
+          <input type="hidden" name="fid" value="{$fid|default=''}">
+
+          <div class="layui-form-item">
+            <label class="layui-form-label xbs768">状态</label>
+            <div class="layui-input-block">
+              <input type="radio" name="record_status" value="1" title="启用"checked>
+              <input type="radio" name="record_status" value="2" title="禁用" {if condition="isset($list['record_status']) and $list['record_status'] eq 2"} checked {/if}>
+              <input type="radio" name="record_status" value="-1" title="标记删除" {if condition="isset($list['record_status']) and  $list['record_status'] eq -1"} checked {/if}>
+            </div>
+          </div>
+
+            <div class="layui-form-item">
+                <label for="L_sign" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
+        </form>
+        <!-- 右侧内容框架，更改从这里结束 -->
+    </div>
+</body>
+</html>

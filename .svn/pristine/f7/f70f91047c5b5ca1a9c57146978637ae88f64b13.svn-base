@@ -1,0 +1,46 @@
+package com.example.config;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.PrintWriter;
+
+
+@Component
+public class LoginIntercepter implements HandlerInterceptor{
+    /**
+     * 进入controller方法之前
+     */
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handle) throws Exception {
+        HttpSession session = request.getSession();
+        String tel = (String) session.getAttribute("tel");
+        response.setContentType("text/html; charset=UTF-8");
+        if(tel==null || tel.isEmpty()){
+            PrintWriter out = response.getWriter();
+            out.flush();
+            out.println("<script>");
+            out.println("var index = parent.layer.getFrameIndex(window.name);" +
+                    "parent.parent.layer.close(index);parent.parent.location.href='/admin';");
+            out.println("</script>");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 调用完controller之后，视图渲染之前
+     */
+    @Override
+    public void postHandle(HttpServletRequest request,HttpServletResponse response, Object handler,ModelAndView modelAndView){ }
+
+    /**
+     * 整个完成之后，通常用于资源清理
+     */
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) { }
+
+}

@@ -1,0 +1,191 @@
+package com.example.model;
+
+import com.example.config.DateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.stereotype.Repository;
+import java.io.Serializable;
+import java.util.Date;
+
+@Repository
+public class AboutUs implements Serializable {
+
+    private Integer fid;
+    private String  about_us;
+    private String  vision;
+    private String  mission;
+    private String  course;
+    private String  core_value;
+    private String  statement;
+    private String  disclaimer;
+    private String  report_complaints;
+    private String  opinion;
+    private String  contact_us;
+    private Integer sort;
+    private Integer record_status;
+    private Integer updater_id;
+    private Integer creator_id;
+    private Date create_time;
+    private String  update_time;
+
+    public Integer getFid() {
+        return fid;
+    }
+
+    public void setFid(Integer fid) {
+        this.fid = fid;
+    }
+
+    public String getAbout_us() {
+        return about_us;
+    }
+
+    public void setAbout_us(String about_us) {
+        this.about_us = about_us;
+    }
+
+    public String getStatement() {
+        return statement;
+    }
+
+    public void setStatement(String statement) {
+        this.statement = statement;
+    }
+
+    public String getDisclaimer() {
+        return disclaimer;
+    }
+
+    public void setDisclaimer(String disclaimer) {
+        this.disclaimer = disclaimer;
+    }
+
+    public String getReport_complaints() {
+        return report_complaints;
+    }
+
+    public void setReport_complaints(String report_complaints) {
+        this.report_complaints = report_complaints;
+    }
+
+    public String getOpinion() {
+        return opinion;
+    }
+
+    public void setOpinion(String opinion) {
+        this.opinion = opinion;
+    }
+
+    public String getContact_us() {
+        return contact_us;
+    }
+
+    public void setContact_us(String contact_us) {
+        this.contact_us = contact_us;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
+    public Integer getRecord_status() {
+        return record_status;
+    }
+
+    public void setRecord_status(Integer record_status) {
+        this.record_status = record_status;
+    }
+
+    public Integer getUpdater_id() {
+        return updater_id;
+    }
+
+    public void setUpdater_id(Integer updater_id) {
+        this.updater_id = updater_id;
+    }
+
+    public Integer getCreator_id() {
+        return creator_id;
+    }
+
+    public void setCreator_id(Integer creator_id) {
+        this.creator_id = creator_id;
+    }
+
+    @JsonSerialize(using = DateSerializer.class)
+    public Date getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(Date create_time) {
+        this.create_time = create_time;
+    }
+
+    public String getUpdate_time() {
+        return update_time;
+    }
+
+    public void setUpdate_time(String update_time) {
+        this.update_time = update_time;
+    }
+
+    public String getVision() {
+        return vision;
+    }
+
+    public void setVision(String vision) {
+        this.vision = vision;
+    }
+
+    public String getMission() {
+        return mission;
+    }
+
+    public void setMission(String mission) {
+        this.mission = mission;
+    }
+
+    public String getCourse() {
+        return course;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
+    public String getCore_value() {
+        return core_value;
+    }
+
+    public void setCore_value(String core_value) {
+        this.core_value = core_value;
+    }
+
+    public AboutUs(){}
+
+    @Override
+    public String toString() {
+        return "AboutUs{" +
+                "fid=" + fid +
+                ", about_us='" + about_us + '\'' +
+                ", vision='" + vision + '\'' +
+                ", mission='" + mission + '\'' +
+                ", course='" + course + '\'' +
+                ", core_value='" + core_value + '\'' +
+                ", statement='" + statement + '\'' +
+                ", disclaimer='" + disclaimer + '\'' +
+                ", report_complaints='" + report_complaints + '\'' +
+                ", opinion='" + opinion + '\'' +
+                ", contact_us='" + contact_us + '\'' +
+                ", sort=" + sort +
+                ", record_status=" + record_status +
+                ", updater_id=" + updater_id +
+                ", creator_id=" + creator_id +
+                ", create_time=" + create_time +
+                ", update_time='" + update_time + '\'' +
+                '}';
+    }
+}

@@ -1,0 +1,126 @@
+    <div class="layui-form-item">
+      <label class="layui-form-label">图片上传<?php html_sign();?></label>
+        <div class="layui-upload">
+          <div style="float: left; width: 150px; text-align: center;">
+             <button type="button" class="layui-btn" id="img">web图片</button>
+            <div class="layui-upload-list">
+              <img class="layui-upload-img" id="img1" width="150" src="{$list.image_url|default=$list.web_image_url}">
+            </div>
+          </div>
+          
+           <div style="float: left;width: 150px; text-align: center; margin-left:20px ">
+              <button type="button" class="layui-btn" id="imgs">App图片</button>
+            <div class="layui-upload-list">
+              <img class="layui-upload-img" id="img2" width="150" src="{$list.image_urls|default=$list.app_image_url}">
+            </div>
+           </div>
+           {if condition="isset($edit) and $edit eq '/meet/edit' "}
+           <div style="float: left;width: 150px; text-align: center; margin-left:20px ">
+              <button type="button" class="layui-btn" id="top_imgs">会议头部图片</button>
+            <div class="layui-upload-list">
+              <img class="layui-upload-img" id="img3" width="150" src="{$list.top_image_url|default=$list.top_image_url}">
+            </div>
+           </div>
+          <input type="hidden" name="top_image_id" id="top_FImageUrls" value="{$list.top_image_id|default=1}">
+          {/if}
+        </div>
+    </div>
+    <input type="hidden"  name="web_image_id"  id="FImageUrl" value="{$list.web_image_id|default=$list.web_id}">
+    <input type="hidden" name="app_image_id"  id="FImageUrls" value="{$list.app_image_id|default=$list.app_id}">
+    
+    <script>
+      layui.use('upload',function(){
+          var $ = layui.jquery
+          ,upload = layui.upload;
+          var web_image_id='{$list.web_image_id|default=$list.web_id}';
+          var app_image_id='{$list.app_image_id|default=$list.app_id}';
+          var top_image_id='{$list.top_image_id|default=0}';
+          var source_id='{$list.source_id|default=""}';
+            //WEB图片上传
+          var uploadInst = upload.render({
+            elem: '#img'
+            ,url: '/upload'
+            ,data: {web_image_id:web_image_id,source_type:1}
+            ,acceptMime: 'image/*'
+            ,exts: 'jpg|jpeg|gif|bmp|png'
+            ,before: function(obj){
+              obj.preview(function(index, file, result){
+                $('#img1').attr('src', result);
+              });
+            }
+            ,done: function(res){
+              //如果上传失败
+              if(res.code == 200){
+                $('#FImageUrl').attr('value', res.data);
+                return layer.msg('上传成功');
+              }else{
+                return layer.msg('上传失败');
+              }
+            }
+          });
+
+          //APP图片上传
+          var uploadInst2 = upload.render({
+            elem: '#imgs'
+            ,url: '/upload'
+            ,data: {app_image_id:app_image_id,source_type:1}
+            ,acceptMime: 'image/*'
+            ,before: function(obj){
+              obj.preview(function(index, file, result){
+                $('#img2').attr('src', result);
+              });
+            }
+            ,done: function(res){
+              if(res.code == 200){
+                $('#FImageUrls').attr('value', res.data);
+                return layer.msg('上传成功');
+              }else{
+                return layer.msg('上传失败');
+              }
+            }
+          });
+
+          //会议头部图片
+          var uploadInst4 = upload.render({
+            elem: '#top_imgs'
+            ,url: '/upload'
+            ,data: { top_image_id: top_image_id,source_type:1}
+            ,acceptMime: 'image/*'
+            ,before: function(obj){
+              obj.preview(function(index, file, result){
+                $('#img3').attr('src', result);
+              });
+            }
+            ,done: function(res){
+              if(res.code == 200){
+                $('#top_FImageUrls').attr('value', res.data);
+                return layer.msg('上传成功');
+              }else{
+                return layer.msg('上传失败');
+              }
+            }
+          });
+
+        //视屏文件上传
+        var uploadInst3 = upload.render({
+          elem: '#video'
+          ,url: '/upload'
+          ,data: {source_id:source_id,source_type:2}
+          ,exts: 'mp4'
+          ,acceptMime: '*'
+          ,before: function(obj){
+            obj.preview(function(index, file, result){
+              $('#videos').attr('src', result);
+            });
+          }
+          ,done: function(res){
+            if(res.code == 200){
+              $('#source_id').attr('value', res.data);
+              return layer.msg('上传成功');
+            }else{
+              return layer.msg('上传失败');
+            }
+          }
+        });
+    });    
+    </script>

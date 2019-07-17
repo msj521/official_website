@@ -1,0 +1,125 @@
+{include file="public/header" /}
+<body>
+        <!-- 右侧主体结束 -->
+    <div class="x-body layui-anim layui-anim-up">
+        <!-- 右侧内容框架，更改从这里开始 -->
+        <form class="layui-form" action='{$update|default="/"}' method="post" enctype="multipart/form-data">
+
+            <div class="layui-form-item">
+              <label for="product_id" class="layui-form-label">产品名称<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <select name="product_id" lay-verify="required"  lay-search="">
+                  <option value="">--选择或者搜索--</option>
+                  {volist name="product_list" id="vo"}
+                  <option value="{$vo.fid}" {if condition="isset($list['product_id']) and $vo['fid'] eq $list['product_id']"} selected="selected" {/if} >{$vo.product_name}</option>
+                  {/volist}
+                </select>
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="class_id" class="layui-form-label">产品类型<?php html_sign();?></label>
+                <div class="layui-input-block">
+                  <select name="product_type" lay-verify="required"  lay-search="" >
+                    <option value="">--选择或者搜索--</option>
+                    {volist name="product_type" key="ko" id="vo"}
+                    <option value="{$ko}" {if condition="isset($list['product_type']) and $ko eq $list['product_type']"} selected="selected" {/if} >{$vo}</option>
+                    {/volist}
+                  </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item"  >
+              <label for="user_id" class="layui-form-label">客户<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <select  name="user_id" lay-verify="required"  lay-search="">
+                    <option value="">--选择或者搜索--</option>
+                    {volist name="user_list" id="vo"}
+                      <option value="{$vo.fid}" {if condition="isset($list['user_id']) and $vo.fid eq $list['user_id']"} selected="selected" {/if} >{$vo.user_name}--{$vo.tel}</option>
+                    {/volist}
+                </select>
+              </div>
+          </div>
+              
+            <div class="layui-form-item">
+              <label class="layui-form-label">产品原价<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <input type="text" name="price_origin" lay-verify="required" placeholder="请输入" class="layui-input" value="{$list['price_origin']|default=0}">
+              </div>
+            </div>
+              
+            <div class="layui-form-item">
+              <label class="layui-form-label">实际支付<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <input type="text" name="price_purchase" lay-verify="required" placeholder="请输入" class="layui-input" value="{$list['price_purchase']|default=0}">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label xbs768">购买时间<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <input class="layui-input" id="LAY_demorange_s" lay-verify="required" name="create_time" value="{$list.create_time|default=''}">
+              </div>
+            </div>
+        
+            <div class="layui-form-item">
+              <label class="layui-form-label xbs768">过期时间<?php html_sign();?></label>
+              <div class="layui-input-block">
+                <input class="layui-input" id="LAY_demorange_e" lay-verify="required" name="expire_time" value="{$list.expire_time|default=''}">
+              </div>
+            </div>
+<!-- 
+            <div class="layui-form-item layui-form-text">
+                <label for="description" class="layui-form-label">备注</label>
+                <div class="layui-input-block" >
+                    <textarea placeholder="请输入直播简介"  id="description" name="description" autocomplete="off"
+                    class="layui-textarea" style="height: 80px;">{$list.description|default=''}</textarea>
+                </div>
+            </div> -->
+
+          <input type="hidden" name="fid" value="{$list.fid|default=''}">
+
+          <div class="layui-form-item">
+            <label class="layui-form-label xbs768">购买状态</label>
+            <div class="layui-input-block">
+              <input type="radio" name="order_status" value="1" title="待审核" checked>
+              <input type="radio" name="order_status" value="2" title="成功" {if condition="isset($list['order_status']) and $list['order_status'] eq 2"} checked {/if}>
+              <input type="radio" name="order_status" value="3" title="失败" {if condition="isset($list['order_status']) and  $list['order_status'] eq -1"} checked {/if}>
+            </div>
+          </div>
+
+          <div class="layui-form-item">
+            <label class="layui-form-label xbs768">状态</label>
+            <div class="layui-input-block">
+              <input type="radio" name="record_status" value="1" title="启用" checked>
+              <input type="radio" name="record_status" value="2" title="禁用" {if condition="isset($list['record_status']) and $list['record_status'] eq 2"} checked {/if}>
+              <input type="radio" name="record_status" value="-1" title="标记删除" {if condition="isset($list['record_status']) and  $list['record_status'] eq -1"} checked {/if}>
+            </div>
+          </div>
+            <div class="layui-form-item">
+                <label for="L_sign" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
+        </form>
+        <!-- 右侧内容框架，更改从这里结束 -->
+    </div>
+<script>
+  layui.use('laydate', function () {
+  var laydate = layui.laydate;
+  //执行一个laydate实例
+  laydate.render({
+    elem: '#LAY_demorange_s' //指定元素
+    , type: 'datetime'
+  });
+  //执行一个laydate实例
+  laydate.render({
+    elem: '#LAY_demorange_e' //指定元素
+    , type: 'datetime'
+  });
+});  
+</script>        
+</body>
+</html>
